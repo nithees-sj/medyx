@@ -34,7 +34,20 @@ async def log_event(
     )
     db.add(ev)
     await db.flush()
+    from app.services.mirror import mirror_audit
+
+    # Mirrored after the caller's commit (the background task opens its own session).
+    _after_commit(db, lambda: mirror_audit(ev.id))
     return ev
+
+
+def _after_commit(db: AsyncSession, fn) -> None:
+    from sqlalchemy import event
+
+    def run(_session) -> None:
+        fn()
+
+    event.listen(db.sync_session, "after_commit", run, once=True)
 
 
 _recent_views: dict[tuple[str, str, str], float] = {}

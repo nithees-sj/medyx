@@ -3,9 +3,12 @@
 import { Upload } from "lucide-react";
 import Link from "next/link";
 
+import { AccessLogView } from "@/components/patient/access-log-view";
 import { AlertsView } from "@/components/patient/alerts-view";
+import { EmergencyView } from "@/components/patient/emergency-view";
 import { useProfileId } from "@/components/patient/profile-shell";
 import { ReviewView } from "@/components/patient/review-view";
+import { SharingView } from "@/components/patient/sharing-view";
 import { UploadView } from "@/components/patient/upload-view";
 import { DocumentsView } from "@/components/record/documents-view";
 import { MedicationsView } from "@/components/record/medications-view";
@@ -52,4 +55,16 @@ export function DocumentsSection() {
 
 export function AlertsSection() {
   return <AlertsView profileId={useProfileId()} />;
+}
+
+export function SharingSection() {
+  return <SharingView profileId={useProfileId()} />;
+}
+
+export function AccessLogSection() {
+  return <AccessLogView profileId={useProfileId()} />;
+}
+
+export function EmergencySection() {
+  return <EmergencyView profileId={useProfileId()} />;
 }

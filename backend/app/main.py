@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -14,8 +15,10 @@ from app.routers import (
     admin,
     alerts,
     auth,
+    consents,
     doctor,
     documents,
+    emergency,
     health,
     notifications,
     onboarding,
@@ -30,11 +33,27 @@ from app.services.safety.engine import safety_hook
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
 
+async def _expire_consents_periodically() -> None:
+    """Expiry is checked on every request; this also tidies up statuses in the background."""
+    from app.db import SessionLocal
+    from app.routers.consents import expire_stale
+
+    while True:
+        try:
+            async with SessionLocal() as db:
+                await expire_stale(db)
+        except Exception:
+            logging.getLogger(__name__).exception("consent cleanup failed")
+        await asyncio.sleep(300)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     get_settings().storage_dir.mkdir(parents=True, exist_ok=True)
     await worker.start()
+    cleanup = asyncio.create_task(_expire_consents_periodically())
     yield
+    cleanup.cancel()
     await worker.stop()
     await get_fhir().aclose()
 
@@ -54,7 +73,21 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    for r in (health, auth, onboarding, profiles, documents, review, record, alerts, admin, notifications, doctor):
+    for r in (
+        health,
+        auth,
+        onboarding,
+        profiles,
+        documents,
+        review,
+        record,
+        alerts,
+        consents,
+        emergency,
+        admin,
+        notifications,
+        doctor,
+    ):
         app.include_router(r.router, prefix="/api")
     return app
 

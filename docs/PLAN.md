@@ -52,10 +52,10 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] ✅ Rajan exactly 4 alerts, Lakshmi 0; idempotent re-run; rule unit tests
 
 ## Phase 6 — Consent Vault + emergency card
-- [ ] QR share + claim; access requests; `get_scoped_record()`; revoke/expiry
-- [ ] Audit log + FHIR Consent/AuditEvent; notifications
-- [ ] Emergency card page, wallet PDF, lock-screen PNG
-- [ ] ✅ §10.3 tests; revocation immediate; emergency fields only + owner notified
+- [x] QR share + claim; access requests; `get_scoped_record()`; revoke/expiry
+- [x] Audit log + FHIR Consent/AuditEvent; notifications
+- [x] Emergency card page, wallet PDF, lock-screen PNG
+- [x] ✅ §10.3 tests; revocation immediate; emergency fields only + owner notified
 
 ## Phase 7 — Doctor portal + Copilot
 - [ ] Risk-sorted dashboard; workspace tabs; specialty summary

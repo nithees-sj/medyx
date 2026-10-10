@@ -135,23 +135,30 @@ def filter_record(record: "PatientRecord", scopes: frozenset[str]) -> "PatientRe
     allergies = list(record.allergies) if "allergies" in scopes else []
     observations = list(record.observations) if "labs" in scopes else []
 
-    # Documents that hold hidden mental-health items are never exposed through provenance.
-    hidden_sources = {
-        s.document_id
-        for coll in (record.conditions, record.medications)
-        for x in coll
-        if (getattr(x, "mental_health", False) or getattr(x, "psychiatric", False)) and not mh
-        for s in x.sources
-    }
-    cited = {
-        s.document_id for coll in (conditions, medications, allergies, observations) for x in coll for s in x.sources
-    }
+    # A document opens through a citation only if *everything* extracted from it is visible to this
+    # viewer, so an out-of-scope item on the same page (a prescription next to a temperature, or a
+    # mental-health diagnosis) can never leak through the source viewer.
+    visible = {x.ref for coll in (conditions, medications, allergies, observations) for x in coll}
+    items_by_doc: dict[str, set[str]] = {}
+    for coll in (record.conditions, record.medications, record.allergies, record.observations):
+        for x in coll:
+            for s in x.sources:
+                items_by_doc.setdefault(s.document_id, set()).add(x.ref)
     documents = []
     for d in record.documents:
         granted = (d.category == "uploaded" and "documents" in scopes) or (
             d.category == "clinical_note" and "notes" in scopes
         )
-        if (granted or d.id in cited) and d.id not in hidden_sources:
+        items = items_by_doc.get(d.id, set())
+        fully_visible = bool(items) and items <= visible
+        hides_mental_health = any(
+            (getattr(x, "mental_health", False) or getattr(x, "psychiatric", False))
+            and x.ref in items
+            and x.ref not in visible
+            for coll in (record.conditions, record.medications)
+            for x in coll
+        )
+        if (granted and not hides_mental_health) or fully_visible:
             documents.append(d)
     scoped = PatientRecord(
         profile_id=record.profile_id,

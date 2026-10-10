@@ -517,3 +517,110 @@ def provenance(
             entity["extension"] = entity_ext
         res["entity"] = [entity]
     return validate(res)
+
+
+# ─────────────────────────────── Consent & audit mirroring ───────────────────────────────
+
+SCOPE_RESOURCE_TYPES = {
+    "conditions": ["Condition", "Encounter"],
+    "medications": ["MedicationRequest"],
+    "allergies": ["AllergyIntolerance"],
+    "labs": ["Observation", "DiagnosticReport"],
+    "documents": ["DocumentReference"],
+    "notes": ["DocumentReference"],
+    "mental_health": ["Condition", "MedicationRequest"],
+}
+SCOPE_SYSTEM = "https://healththread.app/fhir/CodeSystem/consent-scope"
+
+
+def consent(
+    *,
+    patient_ref: str,
+    status: str,
+    created_instant: str,
+    practitioner_ref: dict[str, Any] | None,
+    scopes: list[str],
+    can_write: bool,
+    start: str | None,
+    end: str | None,
+    consent_id: str,
+) -> dict[str, Any]:
+    """FHIR R4 Consent mirroring one HealthThread share/request."""
+    classes = sorted({t for s in scopes for t in SCOPE_RESOURCE_TYPES.get(s, [])})
+    provision: dict[str, Any] = {
+        "type": "permit",
+        "action": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/consentaction", "code": "access"}]}]
+        + (
+            [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/consentaction", "code": "correct"}]}]
+            if can_write
+            else []
+        ),
+        "class": [{"system": "http://hl7.org/fhir/resource-types", "code": c} for c in classes],
+        "code": [{"coding": [{"system": SCOPE_SYSTEM, "code": s} for s in sorted(scopes)]}],
+    }
+    if start or end:
+        provision["period"] = {k: v for k, v in (("start", start), ("end", end)) if v}
+    if practitioner_ref:
+        provision["actor"] = [
+            {
+                "role": {
+                    "coding": [{"system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType", "code": "PRCP"}]
+                },
+                "reference": practitioner_ref,
+            }
+        ]
+    res = {
+        "resourceType": "Consent",
+        "identifier": [{"system": "https://healththread.app/fhir/consent-id", "value": consent_id}],
+        "status": status,
+        "scope": {
+            "coding": [{"system": "http://terminology.hl7.org/CodeSystem/consentscope", "code": "patient-privacy"}]
+        },
+        "category": [{"coding": [{"system": LOINC, "code": "59284-0", "display": "Consent Document"}]}],
+        "patient": ref(patient_ref),
+        "dateTime": created_instant,
+        "policyRule": {"text": "HealthThread scoped, time-limited sharing"},
+        "provision": provision,
+    }
+    return validate(res)
+
+
+AUDIT_ACTION_CODES = {
+    "view": "R",
+    "export": "R",
+    "emergency_view": "R",
+    "chat": "R",
+    "summary": "R",
+    "upload": "C",
+    "prescribe": "C",
+    "consent_change": "U",
+    "alert_review": "U",
+}
+
+
+def audit_event(
+    *, patient_ref: str | None, action: str, recorded: str, agent: dict[str, Any], ip: str | None, description: str
+) -> dict[str, Any]:
+    res: dict[str, Any] = {
+        "resourceType": "AuditEvent",
+        "type": {
+            "system": "http://terminology.hl7.org/CodeSystem/audit-event-type",
+            "code": "rest",
+            "display": "RESTful Operation",
+        },
+        "subtype": [{"system": "https://healththread.app/fhir/CodeSystem/audit-action", "code": action}],
+        "action": AUDIT_ACTION_CODES.get(action, "E"),
+        "recorded": recorded,
+        "outcome": "0",
+        "outcomeDesc": description[:500],
+        "agent": [{"who": agent, "requestor": True, **({"network": {"address": ip, "type": "2"}} if ip else {})}],
+        "source": {"observer": {"display": "HealthThread"}},
+    }
+    if patient_ref:
+        res["entity"] = [
+            {
+                "what": ref(patient_ref),
+                "type": {"system": "http://terminology.hl7.org/CodeSystem/audit-entity-type", "code": "1"},
+            }
+        ]
+    return validate(res)

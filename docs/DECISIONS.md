@@ -53,9 +53,9 @@ Thyronorm is prescribed only once, so the record contains a single levothyroxine
 ## D10 — Citations can open their source document without the `documents` scope
 The demo share grants conditions, medications, allergies and labs, not `documents`. A doctor must still be able to click a citation and see the lab report page it came from. So `get_scoped_record()` exposes two kinds of document:
 - **Listable:** documents the doctor's scopes grant (`documents` for uploads, `notes` for clinical notes). These appear in the library.
-- **Citable:** documents that are the source (via Provenance) of a resource the doctor can already see. These open only from a citation.
+- **Citable:** documents where *everything* extracted from them is visible under the doctor's scopes. These open only from a citation.
 
-A document that carries a mental-health item the doctor can't see is never citable, so it can't leak hidden information.
+A lab report opens for a labs-only doctor. A prescription that also carries a temperature reading does not, because the prescription itself is outside the scope. A document holding a hidden mental-health item is never exposed.
 
 ## D11 — HAPI search cache disabled
 By default HAPI reuses cached results for identical searches for 60 s. The ingest pipeline re-reads the record right after writing it (to merge the next document), so stale searches caused missed merges. Fix:
@@ -88,3 +88,12 @@ A doctor sees an alert only if every piece of its evidence is inside their scope
 
 ## D19 — Kidney drift and the metformin drug–lab rule are one alert
 eGFR (primary) and creatinine share the `kidney` drift group. When metformin is active and eGFR is below 45, or projected to cross 45 within 12 months, the same alert becomes "Kidney function declining across labs while on metformin — review metformin dose". Below 30 it becomes critical. A standalone metformin alert fires only when eGFR is below 45 without a drift.
+
+## D20 — Emergency card token shown once
+Spec §14 stores only the token's hash. So the QR, wallet PDF and lock-screen PNG can only be produced right after the card is created or regenerated: the client sends the token back to the PDF/PNG endpoints, which check it against the hash. To reprint, the owner creates a new card, and the old QR stops working immediately. "Turn off" also replaces the hash, so a printed card can't be revived.
+
+## D21 — Consent and audit mirroring is best-effort and asynchronous
+Postgres rows are the source of truth for enforcement. FHIR `Consent` and `AuditEvent` resources are written in background tasks after commit, so a slow FHIR server never blocks or fails a doctor's request. Failures are logged. A consent's FHIR status follows its lifecycle: proposed → active → inactive (revoked/expired) or rejected (denied).
+
+## D22 — Access requests by email
+Requests match exact HealthThread IDs or exact account emails only, case-insensitively, with no suggestions. An email that manages several profiles returns 409, asking for the HealthThread ID, so a request can never land on the wrong family member. Unknown identifiers get the same generic 404.

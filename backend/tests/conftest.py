@@ -58,6 +58,8 @@ def fhir(request):
 def _no_background_ai(monkeypatch):
     """Alert explanations are upgraded by a background AI call in the app; tests keep the templates."""
     monkeypatch.setattr("app.services.safety.engine.schedule_explanations", lambda *a, **k: None)
+    # FHIR Consent/AuditEvent mirroring runs as background tasks in the app; tests call it explicitly.
+    monkeypatch.setattr("app.services.mirror._spawn", lambda coro: coro.close())
 
 
 @pytest.fixture
