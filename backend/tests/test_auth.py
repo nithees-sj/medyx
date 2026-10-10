@@ -202,9 +202,7 @@ async def test_admin_verifies_doctor_and_creates_practitioner(client, db, fhir):
     login(client, admin)
     pending = (await client.get("/api/admin/doctors")).json()
     assert [d["email"] for d in pending] == ["doc@x.com"]
-    reject_without_note = await client.post(
-        f"/api/admin/doctors/{doc.id}/verify", json={"decision": "reject"}
-    )
+    reject_without_note = await client.post(f"/api/admin/doctors/{doc.id}/verify", json={"decision": "reject"})
     assert reject_without_note.status_code == 422
     resp = await client.post(f"/api/admin/doctors/{doc.id}/verify", json={"decision": "approve"})
     assert resp.status_code == 200 and resp.json()["verification_status"] == "verified"

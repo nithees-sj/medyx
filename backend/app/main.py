@@ -10,8 +10,9 @@ from slowapi.errors import RateLimitExceeded
 from app.config import get_settings
 from app.middleware import CSRFHeaderMiddleware
 from app.rate_limit import limiter
-from app.routers import admin, auth, doctor, health, notifications, onboarding, profiles
+from app.routers import admin, auth, doctor, documents, health, notifications, onboarding, profiles, record, review
 from app.services.fhir_client import get_fhir
+from app.services.ingest.pipeline import worker
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -19,7 +20,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     get_settings().storage_dir.mkdir(parents=True, exist_ok=True)
+    await worker.start()
     yield
+    await worker.stop()
     await get_fhir().aclose()
 
 
@@ -36,7 +39,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    for r in (health, auth, onboarding, profiles, admin, notifications, doctor):
+    for r in (health, auth, onboarding, profiles, documents, review, record, admin, notifications, doctor):
         app.include_router(r.router, prefix="/api")
     return app
 

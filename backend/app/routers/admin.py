@@ -105,9 +105,7 @@ async def verify_doctor(
         )
     else:
         dp.verification_status = "rejected"
-        await notify(
-            db, user_id, "doctor_rejected", "Verification was not approved", body.note, "/doctor/profile"
-        )
+        await notify(db, user_id, "doctor_rejected", "Verification was not approved", body.note, "/doctor/profile")
     await db.commit()
     user = await db.get(User, user_id)
     assert user is not None
@@ -129,15 +127,9 @@ async def verify_doctor(
 @router.get("/stats")
 async def stats(_: User = Depends(require_admin), db: AsyncSession = Depends(get_db)) -> dict:
     users_by_role = dict(
-        (
-            await db.execute(
-                select(func.coalesce(User.role, "not_onboarded"), func.count()).group_by(User.role)
-            )
-        ).all()
+        (await db.execute(select(func.coalesce(User.role, "not_onboarded"), func.count()).group_by(User.role))).all()
     )
-    docs_by_status = dict(
-        (await db.execute(select(Document.status, func.count()).group_by(Document.status))).all()
-    )
+    docs_by_status = dict((await db.execute(select(Document.status, func.count()).group_by(Document.status))).all())
     alerts_by_type = dict((await db.execute(select(Alert.type, func.count()).group_by(Alert.type))).all())
     return {
         "users": sum(users_by_role.values()),
@@ -147,8 +139,6 @@ async def stats(_: User = Depends(require_admin), db: AsyncSession = Depends(get
         "documents_by_status": docs_by_status,
         "alerts_by_type": alerts_by_type,
         "doctors_pending": await db.scalar(
-            select(func.count())
-            .select_from(DoctorProfile)
-            .where(DoctorProfile.verification_status == "pending")
+            select(func.count()).select_from(DoctorProfile).where(DoctorProfile.verification_status == "pending")
         ),
     }

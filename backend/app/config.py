@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.5-flash"
     ai_timeout_seconds: float = 120.0
+    # Requests/minute allowed by the key's quota. Free Gemini tier = 5; raise it on a paid key.
+    ai_requests_per_minute: int = 5
 
     # Data
     database_url: str = "postgresql+psycopg://healththread:healththread@localhost:5432/healththread"

@@ -1,0 +1,33 @@
+{
+  "_comment": "Curated drug–drug interactions between concurrently active medicines. A side matches if the molecule is listed or it has one of the classes.",
+  "interactions": [
+    {
+      "id": "raas_potassium",
+      "a": { "classes": ["ace_inhibitor", "arb"], "label": "ACE inhibitor / ARB" },
+      "b": { "classes": ["potassium_sparing_diuretic", "potassium_supplement"], "molecules": ["spironolactone"], "label": "spironolactone / potassium supplement" },
+      "effect": "hyperkalaemia (high potassium)",
+      "severity": "warning"
+    },
+    {
+      "id": "warfarin_bleeding",
+      "a": { "molecules": ["warfarin"], "label": "warfarin" },
+      "b": { "classes": ["nsaid", "antiplatelet"], "molecules": ["aspirin"], "label": "NSAID / aspirin" },
+      "effect": "serious bleeding",
+      "severity": "warning"
+    },
+    {
+      "id": "clarithromycin_simvastatin",
+      "a": { "molecules": ["clarithromycin"], "label": "clarithromycin" },
+      "b": { "molecules": ["simvastatin"], "label": "simvastatin" },
+      "effect": "myopathy / rhabdomyolysis",
+      "severity": "warning"
+    },
+    {
+      "id": "ssri_tramadol",
+      "a": { "classes": ["ssri"], "label": "SSRI" },
+      "b": { "molecules": ["tramadol", "tramadol + paracetamol"], "label": "tramadol" },
+      "effect": "serotonin syndrome and seizures",
+      "severity": "warning"
+    }
+  ]
+}

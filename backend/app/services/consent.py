@@ -7,6 +7,7 @@ doctor-facing code reads clinical data, and filters every resource by those scop
 
 import uuid
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import select
@@ -16,6 +17,9 @@ from app.db import get_db, utcnow
 from app.deps import current_user
 from app.models import Consent, HealthProfile, User
 from app.models.clinical import SCOPES
+
+if TYPE_CHECKING:
+    from app.services.record import PatientRecord
 
 ALL_SCOPES: frozenset[str] = frozenset(SCOPES)
 DEFAULT_SHARE_SCOPES = ("conditions", "medications", "allergies", "labs")
@@ -112,3 +116,81 @@ async def owner_access(access: Access = Depends(profile_access)) -> Access:
     if not access.is_owner:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Only the account owner can do this")
     return access
+
+
+# ─────────────────────────────── Scoped record (the only doctor read path) ───────────────────────────────
+
+
+def filter_record(record: "PatientRecord", scopes: frozenset[str]) -> "PatientRecord":
+    """Return a copy of the record containing only what `scopes` allow.
+
+    Demographics are always included. Mental-health conditions/medicines need the
+    `mental_health` scope on top of `conditions`/`medications`.
+    """
+    from app.services.record import PatientRecord
+
+    mh = "mental_health" in scopes
+    conditions = [c for c in record.conditions if "conditions" in scopes and (mh or not c.mental_health)]
+    medications = [m for m in record.medications if "medications" in scopes and (mh or not m.psychiatric)]
+    allergies = list(record.allergies) if "allergies" in scopes else []
+    observations = list(record.observations) if "labs" in scopes else []
+
+    # Documents that hold hidden mental-health items are never exposed through provenance.
+    hidden_sources = {
+        s.document_id
+        for coll in (record.conditions, record.medications)
+        for x in coll
+        if (getattr(x, "mental_health", False) or getattr(x, "psychiatric", False)) and not mh
+        for s in x.sources
+    }
+    cited = {
+        s.document_id for coll in (conditions, medications, allergies, observations) for x in coll for s in x.sources
+    }
+    documents = []
+    for d in record.documents:
+        granted = (d.category == "uploaded" and "documents" in scopes) or (
+            d.category == "clinical_note" and "notes" in scopes
+        )
+        if (granted or d.id in cited) and d.id not in hidden_sources:
+            documents.append(d)
+    scoped = PatientRecord(
+        profile_id=record.profile_id,
+        version=record.version,
+        patient_ref=record.patient_ref,
+        display_name=record.display_name,
+        dob=record.dob,
+        sex=record.sex,
+        blood_group=record.blood_group,
+        conditions=conditions,
+        medications=medications,
+        allergies=allergies,
+        observations=observations,
+        documents=documents,
+    )
+    scoped.listable_document_ids = {
+        d.id
+        for d in documents
+        if (d.category == "uploaded" and "documents" in scopes) or (d.category == "clinical_note" and "notes" in scopes)
+    }
+    return scoped
+
+
+async def get_scoped_record(db: AsyncSession, profile_id: uuid.UUID, viewer: User) -> tuple[Access, "PatientRecord"]:
+    """Check consent (active, unexpired, verified doctor) and return the record filtered by scope.
+
+    Every doctor-facing endpoint (workspace, timeline, trends, documents, summary, chat,
+    insights, prescriptions) reads clinical data through this function.
+    """
+    from app.services.record import load_record
+
+    access = await resolve_access(db, profile_id, viewer)
+    record = await load_record(db, access.profile)
+    if access.is_owner:
+        record.listable_document_ids = {d.id for d in record.documents}
+        return access, record
+    return access, filter_record(record, access.scopes)
+
+
+async def scoped_record_for(db: AsyncSession, access: Access) -> "PatientRecord":
+    _, record = await get_scoped_record(db, access.profile.id, access.user)
+    return record

@@ -31,9 +31,7 @@ class Alert(Base):
     __tablename__ = "alerts"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    profile_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True
-    )
+    profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True)
     rule_id: Mapped[str] = mapped_column(String(80))
     type: Mapped[str] = mapped_column(String(40))
     severity: Mapped[str] = mapped_column(String(20))
@@ -54,9 +52,7 @@ class Consent(Base):
     __tablename__ = "consents"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    profile_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True
-    )
+    profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True)
     granted_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     doctor_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"), index=True)
     scopes: Mapped[list[str]] = mapped_column(ARRAY(String(30)))
@@ -104,9 +100,7 @@ class ChatMessage(Base):
     __tablename__ = "chat_messages"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    profile_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True
-    )
+    profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True)
     doctor_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True)
     role: Mapped[str] = mapped_column(String(20))
     content: Mapped[str] = mapped_column(Text)
@@ -118,9 +112,7 @@ class ClinicalNote(Base):
     __tablename__ = "clinical_notes"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    profile_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True
-    )
+    profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True)
     author_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
     title: Mapped[str] = mapped_column(String(300))
     body: Mapped[str] = mapped_column(Text)

@@ -1,0 +1,45 @@
+{
+ "document": {
+  "type": "prescription",
+  "source_organization": {
+   "name": "ANAND FAMILY CLINIC",
+   "address": "12, Gandhi Street, Adyar, Chennai - 600 020"
+  },
+  "practitioner": {
+   "name": "Dr. R. ANAND",
+   "specialty": "General Physician"
+  },
+  "document_date": "2025-04-02",
+  "encounter_reason": "dry cough x 6 wks",
+  "patient_name_as_written": "Rajan S."
+ },
+ "conditions": [],
+ "medications": [
+  {
+   "page": 1,
+   "snippet": "Syp. Dextromethorphan 10 ml 1-1-1 x 7 days",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "written_text": "Syp. Dextromethorphan 10 ml 1-1-1 x 7 days",
+   "brand": null,
+   "generic_molecule": "dextromethorphan",
+   "strength": "10 ml",
+   "form": "syrup",
+   "frequency_text": "1-1-1",
+   "frequency_parsed": {
+    "morning": 1.0,
+    "afternoon": 1.0,
+    "night": 1.0,
+    "per_day": 3.0,
+    "as_needed": false
+   },
+   "duration_days": 7,
+   "route": "oral",
+   "start_date": "2025-04-02",
+   "instructions": null
+  }
+ ],
+ "allergies": [],
+ "labs": [],
+ "vitals": []
+}

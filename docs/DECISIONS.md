@@ -49,3 +49,24 @@ The spec asks for "3 documents from one hospital" with TSH 2.1 / 2.4 / 1.9 over 
 - two later TSH-only lab reports
 
 Thyronorm is prescribed only once, so the record contains a single levothyroxine order and no duplicate-therapy false positive. The 2-page note also exercises page-level provenance.
+
+## D10 — Citations can open their source document without the `documents` scope
+The demo share grants conditions, medications, allergies and labs, not `documents`. A doctor must still be able to click a citation and see the lab report page it came from. So `get_scoped_record()` exposes two kinds of document:
+- **Listable:** documents the doctor's scopes grant (`documents` for uploads, `notes` for clinical notes). These appear in the library.
+- **Citable:** documents that are the source (via Provenance) of a resource the doctor can already see. These open only from a citation.
+
+A document that carries a mental-health item the doctor can't see is never citable, so it can't leak hidden information.
+
+## D11 — HAPI search cache disabled
+By default HAPI reuses cached results for identical searches for 60 s. The ingest pipeline re-reads the record right after writing it (to merge the next document), so stale searches caused missed merges. Fix:
+- every search sends `Cache-Control: no-cache`
+- compose sets `hapi.fhir.reuse_cached_search_results_millis: 0`
+
+## D12 — Gemini quota handling
+The provided key is on the free tier. Google's 429s showed 5 requests/min and 20 requests/day per model.
+- A process-wide sliding-window limiter (`AI_REQUESTS_PER_MINUTE`, default 5) spaces out every call. 429/503 responses are retried after Google's `retryDelay`, waiting longer for background ingestion than for interactive calls.
+- `demo_cache/` holds the 12 real extraction results for the 12 synthetic files, keyed by sha256. Eleven came from `gemini-3.5-flash`. The Lakeview lab report came from `gemini-3.5-flash-lite`, because the daily quota was used up while building. When a call fails (for example, quota exhausted), the pipeline falls back to these cached results, exactly as spec §7.8 allows. Unknown files still fail visibly.
+- With a paid key, raise `AI_REQUESTS_PER_MINUTE` and the same code runs faster.
+
+## D13 — Year-only allergy dates go to the review queue
+The Sunrise note records "Penicillin — skin rash (2022)". The model outputs `2022-01-01` and flags that only the year was given. Per spec §7.4 ("or flagged uncertain"), that item waits in the review queue until a person confirms it, so the penicillin conflict alert appears once Priya confirms. The seed script confirms it through the same review API.

@@ -72,9 +72,7 @@ async def db():
 @pytest.fixture
 async def client():
     transport = httpx.ASGITransport(app=fastapi_app)
-    async with httpx.AsyncClient(
-        transport=transport, base_url="http://test", headers={"X-HT-Request": "1"}
-    ) as c:
+    async with httpx.AsyncClient(transport=transport, base_url="http://test", headers={"X-HT-Request": "1"}) as c:
         yield c
 
 

@@ -16,9 +16,7 @@ class Document(Base):
     __tablename__ = "documents"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    profile_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True
-    )
+    profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("health_profiles.id", ondelete="CASCADE"), index=True)
     # Per-profile running number, shown as "D9" in citations and the UI.
     seq: Mapped[int] = mapped_column(Integer)
     uploaded_by_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))

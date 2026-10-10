@@ -1,0 +1,90 @@
+{
+ "document": {
+  "type": "prescription",
+  "source_organization": {
+   "name": "ANAND FAMILY CLINIC",
+   "address": "12, Gandhi Street, Adyar Chennai - 600 020 Ph: 98410 22334"
+  },
+  "practitioner": {
+   "name": "Dr. R. ANAND",
+   "specialty": "General Physician"
+  },
+  "document_date": "2026-02-18",
+  "encounter_reason": "sore throat, fever x 2 days",
+  "patient_name_as_written": "Rajan S."
+ },
+ "conditions": [
+  {
+   "page": 1,
+   "snippet": "Throat congested.",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "text": "Throat congestion",
+   "icd10_guess": "J02.9",
+   "onset_date": null,
+   "clinical_status": "active"
+  }
+ ],
+ "medications": [
+  {
+   "page": 1,
+   "snippet": "Cap. Novamox 500 mg 1-1-1 x 5 days",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "written_text": "Cap. Novamox 500 mg 1-1-1 x 5 days",
+   "brand": "Novamox",
+   "generic_molecule": "amoxicillin",
+   "strength": "500 mg",
+   "form": "capsule",
+   "frequency_text": "1-1-1",
+   "frequency_parsed": {
+    "morning": 1.0,
+    "afternoon": 1.0,
+    "night": 1.0,
+    "per_day": 3.0,
+    "as_needed": false
+   },
+   "duration_days": 5,
+   "route": null,
+   "start_date": "2026-02-18",
+   "instructions": null
+  },
+  {
+   "page": 1,
+   "snippet": "Tab. Dolo 650 SOS",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "written_text": "Tab. Dolo 650 SOS",
+   "brand": "Dolo",
+   "generic_molecule": "paracetamol",
+   "strength": "650 mg",
+   "form": "tablet",
+   "frequency_text": "SOS",
+   "frequency_parsed": {
+    "morning": 0.0,
+    "afternoon": 0.0,
+    "night": 0.0,
+    "per_day": 0.0,
+    "as_needed": true
+   },
+   "duration_days": null,
+   "route": null,
+   "start_date": "2026-02-18",
+   "instructions": null
+  }
+ ],
+ "allergies": [],
+ "labs": [],
+ "vitals": [
+  {
+   "page": 1,
+   "snippet": "T 100.4 F",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "name": "Temperature",
+   "value": "100.4",
+   "unit": "F",
+   "date": "2026-02-18"
+  }
+ ]
+}

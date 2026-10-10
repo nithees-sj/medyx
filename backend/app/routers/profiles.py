@@ -30,9 +30,7 @@ async def _summaries(db: AsyncSession, profiles: list[HealthProfile]) -> list[Pr
     ).all()
     doc_rows = (
         await db.execute(
-            select(Document.profile_id, func.count())
-            .where(Document.profile_id.in_(ids))
-            .group_by(Document.profile_id)
+            select(Document.profile_id, func.count()).where(Document.profile_id.in_(ids)).group_by(Document.profile_id)
         )
     ).all()
     pending_rows = (

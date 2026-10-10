@@ -1,0 +1,175 @@
+{
+  "_comment": "Lab name → LOINC, canonical unit, and linear unit conversions (canonical = value * scale + offset). Unit keys are normalised: lowercase, µ/μ→u, no spaces, ²→2.",
+  "unit_aliases": {
+    "mg/dl": "mg/dL",
+    "mg%": "mg/dL",
+    "umol/l": "umol/L",
+    "micromol/l": "umol/L",
+    "mmol/l": "mmol/L",
+    "meq/l": "mmol/L",
+    "mmol/mol": "mmol/mol",
+    "%": "%",
+    "g/dl": "g/dL",
+    "gm/dl": "g/dL",
+    "gm%": "g/dL",
+    "g/l": "g/L",
+    "ml/min/1.73m2": "mL/min/{1.73_m2}",
+    "ml/min/1.73sqm": "mL/min/{1.73_m2}",
+    "ml/min/1.73sq.m": "mL/min/{1.73_m2}",
+    "ml/min/1.73m^2": "mL/min/{1.73_m2}",
+    "ml/min": "mL/min/{1.73_m2}",
+    "miu/l": "m[IU]/L",
+    "uiu/ml": "m[IU]/L",
+    "mu/l": "m[IU]/L",
+    "uiu/l": "u[IU]/L",
+    "u/l": "U/L",
+    "iu/l": "U/L",
+    "mg/l": "mg/L",
+    "mmhg": "mm[Hg]",
+    "/min": "/min",
+    "bpm": "/min",
+    "kg": "kg",
+    "kg/m2": "kg/m2",
+    "f": "[degF]",
+    "°f": "[degF]",
+    "c": "Cel",
+    "°c": "Cel"
+  },
+  "unit_display": {
+    "mL/min/{1.73_m2}": "mL/min/1.73m²",
+    "m[IU]/L": "mIU/L",
+    "mm[Hg]": "mmHg",
+    "[degF]": "°F",
+    "Cel": "°C",
+    "kg/m2": "kg/m²"
+  },
+  "codes": [
+    {
+      "code": "2160-0",
+      "display": "Creatinine [Mass/volume] in Serum or Plasma",
+      "short": "Creatinine",
+      "unit": "mg/dL",
+      "decimals": 2,
+      "aliases": ["S. Creatinine", "Creatinine, Serum", "Serum creatinine", "Creatinine", "Sr. Creatinine", "Creatinine (serum)", "Serum Creat", "Creat"],
+      "conversions": { "umol/L": { "scale": 0.011312217, "offset": 0 } }
+    },
+    {
+      "code": "33914-3",
+      "display": "Glomerular filtration rate/1.73 sq M.predicted",
+      "short": "eGFR",
+      "unit": "mL/min/{1.73_m2}",
+      "decimals": 0,
+      "aliases": ["eGFR", "Estimated GFR (CKD-EPI)", "GFR, estimated", "eGFR (MDRD)", "Estimated GFR", "eGFR (CKD-EPI)", "GFR (estimated)", "Estimated glomerular filtration rate", "eGFR CKD-EPI 2021"],
+      "conversions": {}
+    },
+    {
+      "code": "4548-4",
+      "display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+      "short": "HbA1c",
+      "unit": "%",
+      "decimals": 1,
+      "aliases": ["HbA1c", "Glycated haemoglobin", "Glycosylated Hb", "Glycated Hemoglobin", "Glycosylated haemoglobin", "Glycosylated hemoglobin", "Hb A1c", "A1c", "Glycated Hb"],
+      "conversions": { "mmol/mol": { "scale": 0.09148, "offset": 2.152 } }
+    },
+    {
+      "code": "1558-6",
+      "display": "Fasting glucose [Mass/volume] in Serum or Plasma",
+      "short": "Fasting glucose",
+      "unit": "mg/dL",
+      "decimals": 0,
+      "aliases": ["FBS", "Fasting blood sugar", "Glucose fasting", "Fasting blood glucose", "FPG", "Fasting plasma glucose", "Blood sugar (fasting)", "Glucose, fasting", "Fasting glucose"],
+      "conversions": { "mmol/L": { "scale": 18.0, "offset": 0 } }
+    },
+    {
+      "code": "2345-7",
+      "display": "Glucose [Mass/volume] in Serum or Plasma",
+      "short": "Glucose (random)",
+      "unit": "mg/dL",
+      "decimals": 0,
+      "aliases": ["RBS", "Random blood sugar", "Blood glucose random", "Glucose random", "Random plasma glucose"],
+      "conversions": { "mmol/L": { "scale": 18.0, "offset": 0 } }
+    },
+    {
+      "code": "2823-3",
+      "display": "Potassium [Moles/volume] in Serum or Plasma",
+      "short": "Potassium",
+      "unit": "mmol/L",
+      "decimals": 1,
+      "aliases": ["Potassium", "Serum potassium", "S. Potassium", "Potassium, Serum", "K+", "Sr. Potassium"],
+      "conversions": {}
+    },
+    {
+      "code": "2951-2",
+      "display": "Sodium [Moles/volume] in Serum or Plasma",
+      "short": "Sodium",
+      "unit": "mmol/L",
+      "decimals": 0,
+      "aliases": ["Sodium", "Serum sodium", "S. Sodium", "Sodium, Serum", "Na+"],
+      "conversions": {}
+    },
+    {
+      "code": "718-7",
+      "display": "Hemoglobin [Mass/volume] in Blood",
+      "short": "Hemoglobin",
+      "unit": "g/dL",
+      "decimals": 1,
+      "aliases": ["Hemoglobin", "Haemoglobin", "Hb", "HGB", "Hemoglobin (Hb)"],
+      "conversions": { "g/L": { "scale": 0.1, "offset": 0 } }
+    },
+    {
+      "code": "3016-3",
+      "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+      "short": "TSH",
+      "unit": "m[IU]/L",
+      "decimals": 2,
+      "aliases": ["TSH", "Thyroid stimulating hormone", "TSH (Thyroid Stimulating Hormone)", "Thyrotropin", "TSH 3rd generation", "Ultrasensitive TSH"],
+      "conversions": {}
+    },
+    {
+      "code": "2093-3",
+      "display": "Cholesterol [Mass/volume] in Serum or Plasma",
+      "short": "Total cholesterol",
+      "unit": "mg/dL",
+      "decimals": 0,
+      "aliases": ["Total cholesterol", "Cholesterol, total", "Serum cholesterol", "Cholesterol"],
+      "conversions": { "mmol/L": { "scale": 38.67, "offset": 0 } }
+    },
+    {
+      "code": "13457-7",
+      "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation",
+      "short": "LDL cholesterol",
+      "unit": "mg/dL",
+      "decimals": 0,
+      "aliases": ["LDL cholesterol", "LDL", "LDL-C", "Cholesterol, LDL"],
+      "conversions": { "mmol/L": { "scale": 38.67, "offset": 0 } }
+    },
+    {
+      "code": "2571-8",
+      "display": "Triglyceride [Mass/volume] in Serum or Plasma",
+      "short": "Triglycerides",
+      "unit": "mg/dL",
+      "decimals": 0,
+      "aliases": ["Triglycerides", "Triglyceride", "TG", "Serum triglycerides"],
+      "conversions": { "mmol/L": { "scale": 88.57, "offset": 0 } }
+    },
+    {
+      "code": "3094-0",
+      "display": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+      "short": "Blood urea nitrogen",
+      "unit": "mg/dL",
+      "decimals": 0,
+      "aliases": ["BUN", "Blood urea nitrogen", "Urea nitrogen"],
+      "conversions": {}
+    }
+  ],
+  "vitals": [
+    { "key": "systolic", "code": "8480-6", "display": "Systolic blood pressure", "unit": "mm[Hg]" },
+    { "key": "diastolic", "code": "8462-4", "display": "Diastolic blood pressure", "unit": "mm[Hg]" },
+    { "key": "bp", "code": "85354-9", "display": "Blood pressure panel", "unit": "mm[Hg]", "aliases": ["blood pressure", "bp"] },
+    { "key": "pulse", "code": "8867-4", "display": "Heart rate", "unit": "/min", "aliases": ["pulse", "heart rate", "hr", "pr", "pulse rate"] },
+    { "key": "weight", "code": "29463-7", "display": "Body weight", "unit": "kg", "aliases": ["weight", "wt", "body weight"] },
+    { "key": "bmi", "code": "39156-5", "display": "Body mass index", "unit": "kg/m2", "aliases": ["bmi", "body mass index"] },
+    { "key": "temperature", "code": "8310-5", "display": "Body temperature", "unit": "[degF]", "aliases": ["temperature", "temp", "t"] },
+    { "key": "spo2", "code": "59408-5", "display": "Oxygen saturation", "unit": "%", "aliases": ["spo2", "oxygen saturation", "sao2"] }
+  ]
+}

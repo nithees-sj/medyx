@@ -1,0 +1,58 @@
+{
+ "document": {
+  "type": "lab_report",
+  "source_organization": {
+   "name": "Medline Path Labs",
+   "address": "Coimbatore 641 002"
+  },
+  "practitioner": {
+   "name": "Dr. Nirmala Devi",
+   "specialty": "Biochemistry"
+  },
+  "document_date": "2026-08-05",
+  "encounter_reason": null,
+  "patient_name_as_written": "Rajan Subramanian"
+ },
+ "conditions": [],
+ "medications": [],
+ "allergies": [],
+ "labs": [
+  {
+   "page": 1,
+   "snippet": "Creatinine 133 µmol/L HIGH",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "Creatinine",
+   "value": 133.0,
+   "unit_as_written": "µmol/L",
+   "reference_range_text": "64 – 104 µmol/L",
+   "flag_as_written": "HIGH",
+   "specimen_date": "2026-08-05"
+  },
+  {
+   "page": 1,
+   "snippet": "eGFR 47 mL/min/1.73m² LOW",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "eGFR",
+   "value": 47.0,
+   "unit_as_written": "mL/min/1.73m²",
+   "reference_range_text": "> 60 mL/min/1.73m²",
+   "flag_as_written": "LOW",
+   "specimen_date": "2026-08-05"
+  },
+  {
+   "page": 1,
+   "snippet": "Potassium 5.0 mmol/L",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "Potassium",
+   "value": 5.0,
+   "unit_as_written": "mmol/L",
+   "reference_range_text": "3.5 – 5.1 mmol/L",
+   "flag_as_written": null,
+   "specimen_date": "2026-08-05"
+  }
+ ],
+ "vitals": []
+}

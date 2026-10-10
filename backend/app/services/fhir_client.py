@@ -61,7 +61,8 @@ class FhirClient:
     async def search(self, resource_type: str, params: dict[str, Any]) -> list[dict[str, Any]]:
         """Search and follow `next` links; returns all matching resources."""
         params = {"_count": 200, **params}
-        bundle = await self._request("GET", resource_type, params=params)
+        # HAPI reuses cached search results for identical queries (60 s by default); we always need fresh data.
+        bundle = await self._request("GET", resource_type, params=params, headers={"Cache-Control": "no-cache"})
         out: list[dict[str, Any]] = []
         while True:
             for entry in bundle.get("entry", []):
@@ -70,7 +71,7 @@ class FhirClient:
             nxt = next((link["url"] for link in bundle.get("link", []) if link["relation"] == "next"), None)
             if not nxt:
                 return out
-            bundle = await self._request("GET", _rebase(nxt, self.base_url))
+            bundle = await self._request("GET", _rebase(nxt, self.base_url), headers={"Cache-Control": "no-cache"})
 
 
 def _rebase(url: str, base_url: str) -> str:

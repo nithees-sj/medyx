@@ -38,6 +38,8 @@ services:
       hapi.fhir.allow_external_references: "true"
       hapi.fhir.client_id_strategy: ALPHANUMERIC
       hapi.fhir.cors.allowed_origin: "*"
+      # Never serve stale search results (the app re-reads a record right after writing it).
+      hapi.fhir.reuse_cached_search_results_millis: "0"
     restart: unless-stopped
 
 volumes:

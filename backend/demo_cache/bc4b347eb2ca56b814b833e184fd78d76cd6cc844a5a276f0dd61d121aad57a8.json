@@ -1,0 +1,121 @@
+{
+ "document": {
+  "type": "opd_note",
+  "source_organization": {
+   "name": "SUNRISE DIABETES & MULTISPECIALITY HOSPITAL",
+   "address": "No. 14, Lake View Road, Mylapore, Chennai – 600 004"
+  },
+  "practitioner": {
+   "name": "Dr. K. Srinivasan",
+   "specialty": "Diabetology"
+  },
+  "document_date": "2024-03-12",
+  "encounter_reason": "Increased thirst and frequent urination for 2 months. Generalised fatigue.",
+  "patient_name_as_written": "Mr. Rajan Subramanian"
+ },
+ "conditions": [
+  {
+   "page": 1,
+   "snippet": "Type 2 diabetes mellitus (E11.9)",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "text": "Type 2 diabetes mellitus",
+   "icd10_guess": "E11.9",
+   "onset_date": null,
+   "clinical_status": "active"
+  }
+ ],
+ "medications": [
+  {
+   "page": 1,
+   "snippet": "Tab. Glycomet 500 mg 1 – 0 – 1 After food To continue",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "written_text": "Tab. Glycomet 500 mg 1 – 0 – 1 After food To continue",
+   "brand": "Glycomet",
+   "generic_molecule": "metformin",
+   "strength": "500 mg",
+   "form": "tablet",
+   "frequency_text": "1-0-1",
+   "frequency_parsed": {
+    "morning": 1.0,
+    "afternoon": 0.0,
+    "night": 1.0,
+    "per_day": 2.0,
+    "as_needed": false
+   },
+   "duration_days": null,
+   "route": null,
+   "start_date": "2024-03-12",
+   "instructions": "After food"
+  }
+ ],
+ "allergies": [
+  {
+   "page": 1,
+   "snippet": "ALLERGY: Penicillin — skin rash (2022)",
+   "confidence": 0.95,
+   "uncertain_reason": "Only the year (2022) was provided for the date, defaulted to YYYY-01-01.",
+   "substance": "Penicillin",
+   "reaction": "skin rash",
+   "criticality": null,
+   "recorded_date": "2022-01-01"
+  }
+ ],
+ "labs": [
+  {
+   "page": 1,
+   "snippet": "HbA1c 7.8 % (12-Mar-2024)",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "test_name_as_written": "HbA1c",
+   "value": 7.8,
+   "unit_as_written": "%",
+   "reference_range_text": null,
+   "flag_as_written": null,
+   "specimen_date": "2024-03-12"
+  }
+ ],
+ "vitals": [
+  {
+   "page": 1,
+   "snippet": "Wt 78 kg",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "name": "Weight",
+   "value": "78",
+   "unit": "kg",
+   "date": "2024-03-12"
+  },
+  {
+   "page": 1,
+   "snippet": "BMI 27.4 kg/m²",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "name": "BMI",
+   "value": "27.4",
+   "unit": "kg/m²",
+   "date": "2024-03-12"
+  },
+  {
+   "page": 1,
+   "snippet": "BP 132/84 mmHg",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "name": "Blood pressure",
+   "value": "132/84",
+   "unit": "mmHg",
+   "date": "2024-03-12"
+  },
+  {
+   "page": 1,
+   "snippet": "PR 78/min",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "name": "Pulse",
+   "value": "78",
+   "unit": "/min",
+   "date": "2024-03-12"
+  }
+ ]
+}

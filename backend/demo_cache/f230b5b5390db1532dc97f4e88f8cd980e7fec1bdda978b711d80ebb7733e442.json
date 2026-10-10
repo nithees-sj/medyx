@@ -1,0 +1,45 @@
+{
+ "document": {
+  "type": "prescription",
+  "source_organization": {
+   "name": "ANAND FAMILY CLINIC",
+   "address": "12, Gandhi Street, Adyar, Chennai - 600 020"
+  },
+  "practitioner": {
+   "name": "Dr. R. ANAND",
+   "specialty": "General Physician"
+  },
+  "document_date": "2025-09-10",
+  "encounter_reason": "tiredness, high sugars",
+  "patient_name_as_written": "Rajan S."
+ },
+ "conditions": [],
+ "medications": [
+  {
+   "page": 1,
+   "snippet": "Tab. Glucophage 500 mg 1-0-1",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "written_text": "Tab. Glucophage 500 mg 1-0-1",
+   "brand": "Glucophage",
+   "generic_molecule": "metformin",
+   "strength": "500 mg",
+   "form": "tablet",
+   "frequency_text": "1-0-1",
+   "frequency_parsed": {
+    "morning": 1.0,
+    "afternoon": 0.0,
+    "night": 1.0,
+    "per_day": 2.0,
+    "as_needed": false
+   },
+   "duration_days": null,
+   "route": null,
+   "start_date": "2025-09-10",
+   "instructions": null
+  }
+ ],
+ "allergies": [],
+ "labs": [],
+ "vitals": []
+}

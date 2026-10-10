@@ -33,13 +33,13 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] ✅ Visually distinct orgs; legible handwriting
 
 ## Phase 3 — Smart Ingest
-- [ ] Upload API (MIME sniffing, 15 MB / 20 pages, sha256 dedupe)
-- [ ] Background worker with live stages
-- [ ] Gemini extraction (structured output) + DEMO_CACHE
-- [ ] Normalise (LOINC, units, brand → generic), confidence gate, review queue
-- [ ] Merge rules; FHIR transaction Bundle with Provenance + extensions
-- [ ] `/export` Bundle
-- [ ] ✅ One eGFR series of 4 values; 133 µmol/L → 1.50 mg/dL; Provenance everywhere; re-upload skipped; export valid
+- [x] Upload API (MIME sniffing, 15 MB / 20 pages, sha256 dedupe)
+- [x] Background worker with live stages
+- [x] Gemini extraction (structured output) + DEMO_CACHE
+- [x] Normalise (LOINC, units, brand → generic), confidence gate, review queue
+- [x] Merge rules; FHIR transaction Bundle with Provenance + extensions
+- [x] `/export` Bundle
+- [x] ✅ One eGFR series of 4 values; 133 µmol/L → 1.50 mg/dL; Provenance everywhere; re-upload skipped; export valid
 
 ## Phase 4 — Patient portal core
 - [ ] `/app` home + profile switcher; upload with live progress; review queue

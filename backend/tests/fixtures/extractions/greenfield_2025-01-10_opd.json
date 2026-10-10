@@ -1,0 +1,90 @@
+{
+ "document": {
+  "type": "opd_note",
+  "source_organization": {
+   "name": "Greenfield Multispeciality Hospital",
+   "address": "Thrissur, Kerala 680 001"
+  },
+  "practitioner": {
+   "name": "Dr. Mini Thomas",
+   "specialty": "Endocrinology"
+  },
+  "document_date": "2025-01-10",
+  "encounter_reason": null,
+  "patient_name_as_written": "Lakshmi Iyer"
+ },
+ "conditions": [
+  {
+   "page": 1,
+   "snippet": "Hypothyroidism (E03.9)",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "text": "Hypothyroidism",
+   "icd10_guess": "E03.9",
+   "onset_date": "2019-01-01",
+   "clinical_status": "active"
+  }
+ ],
+ "medications": [
+  {
+   "page": 1,
+   "snippet": "Tab. Thyronorm 50 mcg 1-0-0 before breakfast (empty stomach) — continue",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "written_text": "Tab. Thyronorm 50 mcg 1-0-0 before breakfast (empty stomach) — continue",
+   "brand": "Thyronorm",
+   "generic_molecule": "levothyroxine",
+   "strength": "50 mcg",
+   "form": "tablet",
+   "frequency_text": "1-0-0",
+   "frequency_parsed": {
+    "morning": 1.0,
+    "afternoon": 0.0,
+    "night": 0.0,
+    "per_day": 1.0,
+    "as_needed": false
+   },
+   "duration_days": null,
+   "route": "oral",
+   "start_date": "2025-01-10",
+   "instructions": "before breakfast (empty stomach)"
+  }
+ ],
+ "allergies": [],
+ "labs": [
+  {
+   "page": 2,
+   "snippet": "TSH (Thyroid Stimulating Hormone) 2.1 mIU/L 0.4 - 4.5",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "test_name_as_written": "TSH (Thyroid Stimulating Hormone)",
+   "value": 2.1,
+   "unit_as_written": "mIU/L",
+   "reference_range_text": "0.4 - 4.5",
+   "flag_as_written": null,
+   "specimen_date": "2025-01-10"
+  }
+ ],
+ "vitals": [
+  {
+   "page": 1,
+   "snippet": "Pulse 74/min",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "name": "Pulse",
+   "value": "74",
+   "unit": "/min",
+   "date": "2025-01-10"
+  },
+  {
+   "page": 1,
+   "snippet": "BP 122/78 mmHg",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "name": "Blood pressure",
+   "value": "122/78",
+   "unit": "mmHg",
+   "date": "2025-01-10"
+  }
+ ]
+}

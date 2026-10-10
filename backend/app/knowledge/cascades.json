@@ -1,0 +1,50 @@
+{
+  "_comment": "Prescribing cascades: a marker drug started within window_days after an index drug that is still active suggests the marker treats a side effect of the index drug.",
+  "cascades": [
+    {
+      "id": "acei_cough",
+      "index_class": "ace_inhibitor",
+      "index_label": "ACE inhibitor",
+      "adverse_effect": "dry cough",
+      "marker_class": "antitussive",
+      "marker_label": "cough suppressant",
+      "window_days": 180
+    },
+    {
+      "id": "dhp_ccb_oedema",
+      "index_class": "dihydropyridine_ccb",
+      "index_label": "dihydropyridine calcium-channel blocker",
+      "adverse_effect": "ankle oedema",
+      "marker_class": "loop_diuretic",
+      "marker_label": "loop diuretic",
+      "window_days": 180
+    },
+    {
+      "id": "nsaid_hypertension",
+      "index_class": "nsaid",
+      "index_label": "NSAID",
+      "adverse_effect": "raised blood pressure",
+      "marker_class": "antihypertensive",
+      "marker_label": "blood-pressure medicine",
+      "window_days": 90
+    },
+    {
+      "id": "metoclopramide_parkinsonism",
+      "index_class": "d2_antiemetic",
+      "index_label": "metoclopramide",
+      "adverse_effect": "drug-induced parkinsonism",
+      "marker_class": "antiparkinson",
+      "marker_label": "levodopa",
+      "window_days": 365
+    },
+    {
+      "id": "chei_incontinence",
+      "index_class": "cholinesterase_inhibitor",
+      "index_label": "cholinesterase inhibitor",
+      "adverse_effect": "urinary incontinence",
+      "marker_class": "anticholinergic",
+      "marker_label": "bladder anticholinergic",
+      "window_days": 365
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "_comment": "Allergy class → member molecules / drug classes. An allergy to any alias conflicts with every member (cross-reactivity within the class).",
+  "classes": {
+    "penicillin": {
+      "display": "Penicillins",
+      "aliases": ["penicillin", "penicillins", "pcn", "penicillin allergy", "beta-lactam (penicillin)"],
+      "member_classes": ["penicillin"],
+      "members": ["amoxicillin", "ampicillin", "cloxacillin", "piperacillin", "phenoxymethylpenicillin", "benzylpenicillin", "amoxicillin + clavulanate"]
+    },
+    "cephalosporin": {
+      "display": "Cephalosporins",
+      "aliases": ["cephalosporin", "cephalosporins"],
+      "member_classes": ["cephalosporin"],
+      "members": ["cefixime", "cephalexin", "ceftriaxone"]
+    },
+    "sulfonamide": {
+      "display": "Sulfonamide antibiotics",
+      "aliases": ["sulfa", "sulpha", "sulfonamide", "sulphonamide", "sulfa drugs", "sulpha drugs"],
+      "member_classes": ["sulfonamide"],
+      "members": ["sulfamethoxazole", "sulfamethoxazole + trimethoprim"]
+    },
+    "nsaid": {
+      "display": "NSAIDs",
+      "aliases": ["nsaid", "nsaids", "non-steroidal anti-inflammatory drugs"],
+      "member_classes": ["nsaid"],
+      "members": ["ibuprofen", "diclofenac", "naproxen", "aceclofenac", "etoricoxib", "aspirin"]
+    },
+    "macrolide": {
+      "display": "Macrolides",
+      "aliases": ["macrolide", "macrolides"],
+      "member_classes": ["macrolide"],
+      "members": ["azithromycin", "clarithromycin"]
+    },
+    "fluoroquinolone": {
+      "display": "Fluoroquinolones",
+      "aliases": ["fluoroquinolone", "fluoroquinolones", "quinolones"],
+      "member_classes": ["fluoroquinolone"],
+      "members": ["ciprofloxacin", "levofloxacin"]
+    },
+    "aspirin": {
+      "display": "Aspirin",
+      "aliases": ["aspirin", "asa", "acetylsalicylic acid", "salicylates"],
+      "member_classes": ["salicylate"],
+      "members": ["aspirin"]
+    },
+    "opioid": {
+      "display": "Opioids",
+      "aliases": ["opioid", "opioids", "opiates"],
+      "member_classes": ["opioid"],
+      "members": ["tramadol", "codeine"]
+    }
+  }
+}

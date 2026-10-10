@@ -1,0 +1,70 @@
+{
+ "document": {
+  "type": "lab_report",
+  "source_organization": {
+   "name": "Lakeview Heart Institute",
+   "address": "21 Lakeview Drive, Hebbal, Bengaluru 560 024"
+  },
+  "practitioner": {
+   "name": "Dr. S. Fernandes",
+   "specialty": null
+  },
+  "document_date": "2025-01-20",
+  "encounter_reason": null,
+  "patient_name_as_written": "Rajan Subramanian"
+ },
+ "conditions": [],
+ "medications": [],
+ "allergies": [],
+ "labs": [
+  {
+   "page": 1,
+   "snippet": "Creatinine, Serum 1.2 mg/dL 0.7 – 1.3",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "test_name_as_written": "Creatinine, Serum",
+   "value": 1.2,
+   "unit_as_written": "mg/dL",
+   "reference_range_text": "0.7 – 1.3",
+   "flag_as_written": null,
+   "specimen_date": "2025-01-20"
+  },
+  {
+   "page": 1,
+   "snippet": "Estimated GFR (CKD-EPI) 61 mL/min/1.73m² > 60",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "test_name_as_written": "Estimated GFR (CKD-EPI)",
+   "value": 61.0,
+   "unit_as_written": "mL/min/1.73m²",
+   "reference_range_text": "> 60",
+   "flag_as_written": null,
+   "specimen_date": "2025-01-20"
+  },
+  {
+   "page": 1,
+   "snippet": "HbA1c 7.2 % 4.0 – 5.6",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "test_name_as_written": "HbA1c",
+   "value": 7.2,
+   "unit_as_written": "%",
+   "reference_range_text": "4.0 – 5.6",
+   "flag_as_written": null,
+   "specimen_date": "2025-01-20"
+  },
+  {
+   "page": 1,
+   "snippet": "Potassium 4.6 mmol/L 3.5 – 5.1",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "test_name_as_written": "Potassium",
+   "value": 4.6,
+   "unit_as_written": "mmol/L",
+   "reference_range_text": "3.5 – 5.1",
+   "flag_as_written": null,
+   "specimen_date": "2025-01-20"
+  }
+ ],
+ "vitals": []
+}

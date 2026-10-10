@@ -62,10 +62,7 @@ class FakeFhirClient:
         responses = []
         for e in entries:
             res = _rewrite_refs(copy.deepcopy(e["resource"]), mapping)
-            if e["request"]["method"] == "POST":
-                saved = self._put(res, e["_id"])
-            else:
-                saved = self._put(res, res["id"])
+            saved = self._put(res, e["_id"]) if e["request"]["method"] == "POST" else self._put(res, res["id"])
             responses.append(
                 {
                     "response": {

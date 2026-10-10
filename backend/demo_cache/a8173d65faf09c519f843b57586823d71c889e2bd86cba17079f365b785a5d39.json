@@ -1,0 +1,70 @@
+{
+ "document": {
+  "type": "lab_report",
+  "source_organization": {
+   "name": "SUNRISE DIABETES & MULTISPECIALITY HOSPITAL",
+   "address": "No. 14, Lake View Road, Mylapore, Chennai – 600 004"
+  },
+  "practitioner": {
+   "name": "Dr. K. Srinivasan",
+   "specialty": null
+  },
+  "document_date": "2024-03-12",
+  "encounter_reason": null,
+  "patient_name_as_written": "Mr. Rajan Subramanian"
+ },
+ "conditions": [],
+ "medications": [],
+ "allergies": [],
+ "labs": [
+  {
+   "page": 1,
+   "snippet": "Glycated Haemoglobin (HbA1c) 7.8 H % 4.0 - 5.6",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "Glycated Haemoglobin (HbA1c)",
+   "value": 7.8,
+   "unit_as_written": "%",
+   "reference_range_text": "4.0 - 5.6",
+   "flag_as_written": "H",
+   "specimen_date": "2024-03-12"
+  },
+  {
+   "page": 1,
+   "snippet": "Fasting Blood Sugar 156 H mg/dL 70 - 100",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "Fasting Blood Sugar",
+   "value": 156.0,
+   "unit_as_written": "mg/dL",
+   "reference_range_text": "70 - 100",
+   "flag_as_written": "H",
+   "specimen_date": "2024-03-12"
+  },
+  {
+   "page": 1,
+   "snippet": "Serum Creatinine 1.0 mg/dL 0.7 - 1.3",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "Serum Creatinine",
+   "value": 1.0,
+   "unit_as_written": "mg/dL",
+   "reference_range_text": "0.7 - 1.3",
+   "flag_as_written": null,
+   "specimen_date": "2024-03-12"
+  },
+  {
+   "page": 1,
+   "snippet": "eGFR 72 mL/min/1.73m² > 60",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "eGFR",
+   "value": 72.0,
+   "unit_as_written": "mL/min/1.73m²",
+   "reference_range_text": "> 60",
+   "flag_as_written": null,
+   "specimen_date": "2024-03-12"
+  }
+ ],
+ "vitals": []
+}

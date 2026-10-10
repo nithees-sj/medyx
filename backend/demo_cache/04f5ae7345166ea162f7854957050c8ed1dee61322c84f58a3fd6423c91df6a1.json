@@ -1,0 +1,34 @@
+{
+ "document": {
+  "type": "lab_report",
+  "source_organization": {
+   "name": "Greenfield Multispeciality Hospital",
+   "address": "Thrissur, Kerala 680 001"
+  },
+  "practitioner": {
+   "name": "Dr. Mini Thomas",
+   "specialty": null
+  },
+  "document_date": "2025-09-22",
+  "encounter_reason": null,
+  "patient_name_as_written": "Lakshmi Iyer"
+ },
+ "conditions": [],
+ "medications": [],
+ "allergies": [],
+ "labs": [
+  {
+   "page": 1,
+   "snippet": "TSH (Thyroid Stimulating Hormone) 2.4 mIU/L 0.4 - 4.5",
+   "confidence": 1.0,
+   "uncertain_reason": null,
+   "test_name_as_written": "TSH (Thyroid Stimulating Hormone)",
+   "value": 2.4,
+   "unit_as_written": "mIU/L",
+   "reference_range_text": "0.4 - 4.5",
+   "flag_as_written": null,
+   "specimen_date": "2025-09-22"
+  }
+ ],
+ "vitals": []
+}

@@ -71,9 +71,7 @@ def wrap(c: Canvas, text: str, font: str, size: float, width: float) -> list[str
     return lines
 
 
-def para(
-    c: Canvas, x: float, y: float, text: str, font: str, size: float, width: float, leading: float
-) -> float:
+def para(c: Canvas, x: float, y: float, text: str, font: str, size: float, width: float, leading: float) -> float:
     c.setFont(font, size)
     for line in wrap(c, text, font, size, width):
         c.drawString(x, y, line)
@@ -100,9 +98,7 @@ def sunrise_letterhead(c: Canvas, dept: str) -> float:
     for i in range(7):
         a = math.pi * (i + 1) / 8
         c.setLineWidth(1.6)
-        c.line(
-            62 + 20 * math.cos(a), H - 58 + 20 * math.sin(a), 62 + 27 * math.cos(a), H - 58 + 27 * math.sin(a)
-        )
+        c.line(62 + 20 * math.cos(a), H - 58 + 20 * math.sin(a), 62 + 27 * math.cos(a), H - 58 + 27 * math.sin(a))
     c.rect(36, H - 62, 52, 1.5, fill=1, stroke=0)
 
     c.setFont("Times-Bold", 17)
@@ -269,9 +265,7 @@ def sunrise_opd(path: Path) -> None:
     c.line(36, 60, W - 36, 60)
     c.setFont("Times-Roman", 7.5)
     c.setFillColor(HexColor("#607D8B"))
-    c.drawCentredString(
-        W / 2, 48, "Emergency: 044-2499 1000 (24×7)   ·   Please bring this record on your next visit."
-    )
+    c.drawCentredString(W / 2, 48, "Emergency: 044-2499 1000 (24×7)   ·   Please bring this record on your next visit.")
     footnote(c)
     c.showPage()
     c.save()
@@ -420,9 +414,7 @@ def lakeview_cardiology(path: Path) -> None:
             ("Consultant", "Dr. S. Fernandes, DM (Cardiology)"),
         ],
     )
-    y = lv_section(
-        c, y, "Presenting concern", "Morning headaches for 3 weeks. BP in the 160s at a pharmacy check."
-    )
+    y = lv_section(c, y, "Presenting concern", "Morning headaches for 3 weeks. BP in the 160s at a pharmacy check.")
     y = lv_section(
         c,
         y,
@@ -824,9 +816,7 @@ def greenfield_opd(path: Path) -> None:
     c.drawString(40, y - 4, "Rx")
     c.setFont("Helvetica", 10.5)
     c.setFillColor(HexColor("#212121"))
-    c.drawString(
-        80, y - 4, "Tab. Thyronorm 50 mcg    1-0-0    before breakfast (empty stomach)    — continue"
-    )
+    c.drawString(80, y - 4, "Tab. Thyronorm 50 mcg    1-0-0    before breakfast (empty stomach)    — continue")
     y -= 36
     y = para(
         c,
@@ -886,9 +876,7 @@ def _font(name: str, size: int, weight: str | int | None = None) -> ImageFont.Fr
     return f
 
 
-def _hand(
-    draw: ImageDraw.ImageDraw, rnd: random.Random, xy: tuple[int, int], text: str, size: int = 54
-) -> None:
+def _hand(draw: ImageDraw.ImageDraw, rnd: random.Random, xy: tuple[int, int], text: str, size: int = 54) -> None:
     """Draw handwriting word by word with slight baseline wobble and size variation."""
     x, y = xy
     for word in text.split(" "):
@@ -906,9 +894,7 @@ def anand_rx(path: Path, d: date, complaint: list[str], rx: list[str], seed: int
     for _ in range(1400):
         x, y = rnd.randrange(w), rnd.randrange(h)
         shade = rnd.randint(228, 242)
-        draw.line(
-            [(x, y), (x + rnd.randint(-6, 6), y + rnd.randint(-6, 6))], fill=(shade, shade - 3, shade - 12)
-        )
+        draw.line([(x, y), (x + rnd.randint(-6, 6), y + rnd.randint(-6, 6))], fill=(shade, shade - 3, shade - 12))
 
     # Printed pad header
     serif_b = _font("Lora.ttf", 52, "Bold")
@@ -917,9 +903,7 @@ def anand_rx(path: Path, d: date, complaint: list[str], rx: list[str], seed: int
     draw.text((80, 70), "Dr. R. ANAND", font=serif_b, fill=PRINT_INK)
     draw.text((80, 134), "M.B.B.S., General Physician", font=serif, fill=PRINT_INK)
     draw.text((80, 172), "Reg. No. TNMC 45120", font=serif_s, fill=PRINT_INK)
-    draw.text(
-        (w - 80, 76), "ANAND FAMILY CLINIC", font=_font("Lora.ttf", 34, "Bold"), fill=PRINT_INK, anchor="ra"
-    )
+    draw.text((w - 80, 76), "ANAND FAMILY CLINIC", font=_font("Lora.ttf", 34, "Bold"), fill=PRINT_INK, anchor="ra")
     draw.text((w - 80, 124), "12, Gandhi Street, Adyar", font=serif_s, fill=PRINT_INK, anchor="ra")
     draw.text((w - 80, 154), "Chennai – 600 020", font=serif_s, fill=PRINT_INK, anchor="ra")
     draw.text((w - 80, 184), "Ph: 98410 22334", font=serif_s, fill=PRINT_INK, anchor="ra")
@@ -961,23 +945,17 @@ def anand_rx(path: Path, d: date, complaint: list[str], rx: list[str], seed: int
         fill=PRINT_INK,
         anchor="ma",
     )
-    draw.text(
-        (w // 2, h - 70), FOOTNOTE, font=_font("Lora.ttf", 16, "Regular"), fill=(150, 150, 150), anchor="ma"
-    )
+    draw.text((w // 2, h - 70), FOOTNOTE, font=_font("Lora.ttf", 16, "Regular"), fill=(150, 150, 150), anchor="ma")
 
     # Phone-photo feel: slight rotation, soft blur, sensor noise, uneven lighting.
-    img = img.rotate(
-        rnd.uniform(-1.6, 1.6), resample=Image.Resampling.BICUBIC, expand=True, fillcolor=(236, 232, 220)
-    )
+    img = img.rotate(rnd.uniform(-1.6, 1.6), resample=Image.Resampling.BICUBIC, expand=True, fillcolor=(236, 232, 220))
     img = img.filter(ImageFilter.GaussianBlur(0.6))
     # Seeded noise (PIL's effect_noise uses an unseeded C RNG, which breaks determinism).
     grain = np.random.default_rng(seed).normal(128, 10, (img.size[1], img.size[0])).clip(0, 255)
     noise = Image.fromarray(grain.astype(np.uint8), mode="L").convert("RGB")
     img = Image.blend(img, noise, 0.06)
     shade = Image.linear_gradient("L").resize(img.size).rotate(25)
-    img = Image.composite(
-        img, Image.new("RGB", img.size, (205, 200, 188)), shade.point(lambda v: 200 + v // 5)
-    )
+    img = Image.composite(img, Image.new("RGB", img.size, (205, 200, 188)), shade.point(lambda v: 200 + v // 5))
     img.save(path, format="PNG", compress_level=6)
 
 

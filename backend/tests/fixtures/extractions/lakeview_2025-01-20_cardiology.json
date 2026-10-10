@@ -1,0 +1,100 @@
+{
+ "document": {
+  "type": "opd_note",
+  "source_organization": {
+   "name": "LAKEVIEW HEART INSTITUTE",
+   "address": "21 Lakeview Drive, Hebbal, Bengaluru 560 024"
+  },
+  "practitioner": {
+   "name": "Dr. S. Fernandes",
+   "specialty": "Cardiology"
+  },
+  "document_date": "2025-01-20",
+  "encounter_reason": "Morning headaches for 3 weeks. BP in the 160s at a pharmacy check.",
+  "patient_name_as_written": "Rajan Subramanian"
+ },
+ "conditions": [
+  {
+   "page": 1,
+   "snippet": "Essential hypertension (I10)",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "text": "Essential hypertension",
+   "icd10_guess": "I10",
+   "onset_date": null,
+   "clinical_status": "active"
+  }
+ ],
+ "medications": [
+  {
+   "page": 1,
+   "snippet": "Tab. Cardace 5 mg 1-0-0 Morning",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "written_text": "Tab. Cardace 5 mg 1-0-0 Morning",
+   "brand": "Cardace",
+   "generic_molecule": "ramipril",
+   "strength": "5 mg",
+   "form": "tablet",
+   "frequency_text": "1-0-0",
+   "frequency_parsed": {
+    "morning": 1.0,
+    "afternoon": 0.0,
+    "night": 0.0,
+    "per_day": 1.0,
+    "as_needed": false
+   },
+   "duration_days": null,
+   "route": "oral",
+   "start_date": "2025-01-20",
+   "instructions": "Morning"
+  },
+  {
+   "page": 1,
+   "snippet": "Tab. Ecosprin 75 mg 0-1-0 After lunch",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "written_text": "Tab. Ecosprin 75 mg 0-1-0 After lunch",
+   "brand": "Ecosprin",
+   "generic_molecule": "aspirin",
+   "strength": "75 mg",
+   "form": "tablet",
+   "frequency_text": "0-1-0",
+   "frequency_parsed": {
+    "morning": 0.0,
+    "afternoon": 1.0,
+    "night": 0.0,
+    "per_day": 1.0,
+    "as_needed": false
+   },
+   "duration_days": null,
+   "route": "oral",
+   "start_date": "2025-01-20",
+   "instructions": "After lunch"
+  }
+ ],
+ "allergies": [],
+ "labs": [],
+ "vitals": [
+  {
+   "page": 1,
+   "snippet": "BP 158/96 mmHg",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "name": "Blood pressure",
+   "value": "158/96",
+   "unit": "mmHg",
+   "date": "2025-01-20"
+  },
+  {
+   "page": 1,
+   "snippet": "HR 82/min",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "name": "Pulse",
+   "value": "82",
+   "unit": "/min",
+   "date": "2025-01-20"
+  }
+ ]
+}

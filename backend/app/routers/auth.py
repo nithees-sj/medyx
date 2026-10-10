@@ -68,9 +68,7 @@ async def google_login(
 
     user = await db.scalar(select(User).where(User.google_sub == claims["sub"]))
     if user is None:
-        user = User(
-            google_sub=claims["sub"], email=claims["email"], name=claims.get("name") or claims["email"]
-        )
+        user = User(google_sub=claims["sub"], email=claims["email"], name=claims.get("name") or claims["email"])
         db.add(user)
     user.email = claims["email"]
     user.avatar_url = claims.get("picture")

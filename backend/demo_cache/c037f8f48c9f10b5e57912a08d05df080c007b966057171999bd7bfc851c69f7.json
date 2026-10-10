@@ -1,0 +1,58 @@
+{
+ "document": {
+  "type": "lab_report",
+  "source_organization": {
+   "name": "CITY DIAGNOSTICS",
+   "address": "Plot 7, Anna Salai, Chennai 600 018"
+  },
+  "practitioner": {
+   "name": "Dr. Farhan Qureshi",
+   "specialty": "Consultant Biochemist"
+  },
+  "document_date": "2026-01-15",
+  "encounter_reason": null,
+  "patient_name_as_written": "Rajan Subramanian"
+ },
+ "conditions": [],
+ "medications": [],
+ "allergies": [],
+ "labs": [
+  {
+   "page": 1,
+   "snippet": "S. Creatinine 1.4 H mg/dL 0.7-1.3",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "S. Creatinine",
+   "value": 1.4,
+   "unit_as_written": "mg/dL",
+   "reference_range_text": "0.7-1.3",
+   "flag_as_written": "H",
+   "specimen_date": "2026-01-15"
+  },
+  {
+   "page": 1,
+   "snippet": "GFR, estimated 52 L mL/min/1.73m² >60",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "GFR, estimated",
+   "value": 52.0,
+   "unit_as_written": "mL/min/1.73m²",
+   "reference_range_text": ">60",
+   "flag_as_written": "L",
+   "specimen_date": "2026-01-15"
+  },
+  {
+   "page": 1,
+   "snippet": "HbA1c 7.0 H % 4.0-5.6",
+   "confidence": 0.99,
+   "uncertain_reason": null,
+   "test_name_as_written": "HbA1c",
+   "value": 7.0,
+   "unit_as_written": "%",
+   "reference_range_text": "4.0-5.6",
+   "flag_as_written": "H",
+   "specimen_date": "2026-01-15"
+  }
+ ],
+ "vitals": []
+}
