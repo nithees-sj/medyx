@@ -8,12 +8,13 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.db import get_db
 from app.deps import client_ip, current_user
-from app.models import User
+from app.models import Alert, User
 from app.services import views
 from app.services.audit import audit_view, log_event
 from app.services.consent import Access, get_scoped_record, owner_access
@@ -137,7 +138,23 @@ async def trends(
 ) -> dict[str, Any]:
     access, record = await get_scoped_record(db, profile_id, user)
     await audit_view(db, access, "trends", ["labs"], client_ip(request))
-    return {"analytes": views.trends(record), "org_colors": views.org_colors(record)}
+    analytes = views.trends(record)
+    # Attach the regression + projection of any active drift alert the viewer can see.
+    from app.routers.alerts import visible_to
+
+    drift_alerts = (
+        await db.scalars(
+            select(Alert).where(Alert.profile_id == profile_id, Alert.type == "lab_drift", Alert.status == "active")
+        )
+    ).all()
+    for alert in drift_alerts:
+        if (alert.details or {}).get("superseded_by") or (not access.is_owner and not visible_to(record, alert)):
+            continue
+        for a in analytes:
+            series = (alert.details or {}).get("series", {}).get(a["loinc"])
+            if series:
+                a["drift"] = {**series, "alert_id": str(alert.id)}
+    return {"analytes": analytes, "org_colors": views.org_colors(record)}
 
 
 @router.get("/profiles/{profile_id}/medications")

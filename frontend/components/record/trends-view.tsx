@@ -150,7 +150,9 @@ export function AnalyteCard({ analyte: a, colors }: { analyte: Analyte; colors: 
               <span className="font-medium">Steady drift across labs:</span> {drift.slope_per_year > 0 ? "+" : ""}
               {drift.slope_per_year.toFixed(a.decimals >= 1 ? 2 : 1)} {a.unit} per year.
               {drift.projected_cross_date
-                ? ` Projected to cross ${drift.threshold_label} around ${fmtDate(drift.projected_cross_date, "MMM yyyy")}.`
+                ? drift.cross_passed
+                  ? ` The trend line reached ${drift.threshold_label} around ${fmtDate(drift.projected_cross_date, "MMM yyyy")}.`
+                  : ` Projected to cross ${drift.threshold_label} around ${fmtDate(drift.projected_cross_date, "MMM yyyy")}.`
                 : ""}
             </span>
           </div>

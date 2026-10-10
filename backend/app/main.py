@@ -10,9 +10,22 @@ from slowapi.errors import RateLimitExceeded
 from app.config import get_settings
 from app.middleware import CSRFHeaderMiddleware
 from app.rate_limit import limiter
-from app.routers import admin, auth, doctor, documents, health, notifications, onboarding, profiles, record, review
+from app.routers import (
+    admin,
+    alerts,
+    auth,
+    doctor,
+    documents,
+    health,
+    notifications,
+    onboarding,
+    profiles,
+    record,
+    review,
+)
 from app.services.fhir_client import get_fhir
-from app.services.ingest.pipeline import worker
+from app.services.ingest.pipeline import post_write_hooks, worker
+from app.services.safety.engine import safety_hook
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -28,6 +41,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    if safety_hook not in post_write_hooks:
+        post_write_hooks.append(safety_hook)
     app = FastAPI(title="HealthThread API", lifespan=lifespan)
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
@@ -39,7 +54,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    for r in (health, auth, onboarding, profiles, documents, review, record, admin, notifications, doctor):
+    for r in (health, auth, onboarding, profiles, documents, review, record, alerts, admin, notifications, doctor):
         app.include_router(r.router, prefix="/api")
     return app
 

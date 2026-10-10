@@ -47,9 +47,9 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] ✅ Upload → review → timeline at phone width (Playwright)
 
 ## Phase 5 — Safety Engine
-- [ ] 5 rules + knowledge JSON; explanations via Gemini; fingerprint idempotency
-- [ ] Alerts UI + re-run; `/prescriptions/check`
-- [ ] ✅ Rajan exactly 4 alerts, Lakshmi 0; idempotent re-run; rule unit tests
+- [x] 5 rules + knowledge JSON; explanations via Gemini; fingerprint idempotency
+- [x] Alerts UI + re-run; `/prescriptions/check`
+- [x] ✅ Rajan exactly 4 alerts, Lakshmi 0; idempotent re-run; rule unit tests
 
 ## Phase 6 — Consent Vault + emergency card
 - [ ] QR share + claim; access requests; `get_scoped_record()`; revoke/expiry

@@ -3,6 +3,7 @@
 import { Upload } from "lucide-react";
 import Link from "next/link";
 
+import { AlertsView } from "@/components/patient/alerts-view";
 import { useProfileId } from "@/components/patient/profile-shell";
 import { ReviewView } from "@/components/patient/review-view";
 import { UploadView } from "@/components/patient/upload-view";
@@ -47,4 +48,8 @@ export function MedicationsSection() {
 export function DocumentsSection() {
   const id = useProfileId();
   return <DocumentsView profileId={id} reviewHref={`/app/p/${id}/review`} canRetry emptyAction={<UploadCta id={id} />} />;
+}
+
+export function AlertsSection() {
+  return <AlertsView profileId={useProfileId()} />;
 }

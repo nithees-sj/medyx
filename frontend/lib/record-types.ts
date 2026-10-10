@@ -56,6 +56,7 @@ export interface DriftInfo {
   threshold: number;
   threshold_label: string;
   projected_cross_date: string | null;
+  cross_passed?: boolean;
   alert_id: string | null;
 }
 
@@ -136,4 +137,33 @@ export interface ReviewItem {
   snippet: string | null;
   uncertain_reason: string | null;
   created_at: string;
+}
+
+export interface AlertEvidence {
+  ref: string;
+  kind: "medication" | "allergy" | "observation" | "condition";
+  label: string;
+  date: string | null;
+  org: string | null;
+  document_id: string | null;
+  doc_label: string | null;
+  page: number | null;
+  snippet: string | null;
+}
+
+export interface AlertRow {
+  id: string;
+  rule_id: string;
+  type: "duplicate_therapy" | "allergy_conflict" | "prescribing_cascade" | "lab_drift" | "interaction";
+  severity: "critical" | "warning" | "info";
+  title: string;
+  patient_text: string;
+  clinical_text: string;
+  evidence: AlertEvidence[];
+  status: "active" | "reviewed_intentional" | "resolved" | "dismissed";
+  review_note: string | null;
+  reviewed_by: string | null;
+  details: { explanation_source?: "ai" | "template"; series?: Record<string, unknown> };
+  created_at: string;
+  updated_at: string;
 }

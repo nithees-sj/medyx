@@ -54,6 +54,12 @@ def fhir(request):
     set_fhir(None)
 
 
+@pytest.fixture(autouse=True)
+def _no_background_ai(monkeypatch):
+    """Alert explanations are upgraded by a background AI call in the app; tests keep the templates."""
+    monkeypatch.setattr("app.services.safety.engine.schedule_explanations", lambda *a, **k: None)
+
+
 @pytest.fixture
 def settings():
     s = get_settings()

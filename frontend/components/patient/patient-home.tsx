@@ -16,13 +16,14 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { AddProfileDialog } from "@/components/patient/add-profile-dialog";
+import { ALERT_TYPE_LABEL, SeverityBadge } from "@/components/record/alert-card";
 import { DocumentStatus } from "@/components/record/documents-view";
 import { ProfileSwitcher } from "@/components/patient/profile-switcher";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states";
 import { Card, CardContent } from "@/components/ui/card";
 import { docTypeLabel, fmtDate } from "@/lib/format";
 import { lastProfile, rememberProfile, useProfiles } from "@/lib/hooks/profiles";
-import { useDocuments } from "@/lib/hooks/record";
+import { useAlerts, useDocuments } from "@/lib/hooks/record";
 import type { Profile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -104,6 +105,8 @@ function ProfileOverview({ profile: p }: { profile: Profile }) {
           note={p.pending_review ? "Check what we read" : "All confirmed"}
         />
       </div>
+
+      <HomeAlerts profileId={p.id} base={base} />
 
       {p.pending_review > 0 && (
         <Link
@@ -228,5 +231,39 @@ function Action({
       <Icon className="size-5" />
       {label}
     </Link>
+  );
+}
+
+function HomeAlerts({ profileId, base }: { profileId: string; base: string }) {
+  const { data } = useAlerts(profileId);
+  if (!data?.length) return null;
+  return (
+    <section className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-medium text-muted-foreground">Needs attention</h2>
+        <Link href={`${base}/alerts`} className="text-sm text-primary hover:underline">
+          All alerts
+        </Link>
+      </div>
+      <ul className="space-y-2">
+        {data.slice(0, 4).map((a) => (
+          <li key={a.id}>
+            <Link
+              href={`${base}/alerts`}
+              className={cn(
+                "flex flex-col gap-1.5 rounded-xl border bg-card p-3 transition-colors hover:border-primary/40 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none sm:flex-row sm:items-center sm:gap-3",
+                a.severity === "critical" ? "border-critical/40" : "border-warning/40",
+              )}
+            >
+              <span className="flex items-center gap-2">
+                <SeverityBadge severity={a.severity} />
+                <span className="text-xs text-muted-foreground sm:hidden">{ALERT_TYPE_LABEL[a.type]}</span>
+              </span>
+              <span className="min-w-0 text-sm font-medium sm:truncate">{a.title}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

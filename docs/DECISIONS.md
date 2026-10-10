@@ -76,3 +76,15 @@ Each hospital or lab gets a stable colour per profile, assigned in order of firs
 
 ## D15 — Citation highlighting
 The viewer renders PDFs with react-pdf (PDF.js) and highlights text-layer items that appear in the quoted snippet on the cited page. If none match, or the source is a photo, a quote box shows the snippet. The review queue uses a server-rendered crop (PyMuPDF `search_for`) with the snippet boxed.
+
+## D16 — Alert explanations: template first, AI upgrade later
+Rules decide every alert. Each new alert gets a deterministic template explanation straight away, so alerts never wait on the AI and still work offline. About 4 s after a profile's writes settle, a single batched AI call rewrites the texts for all pending alerts. The required closing sentence ("Please discuss this with a doctor before changing any medicine.") is enforced in code, not left to the model. If the AI is unavailable, the template text stays. The UI shows "explained by AI" only when the AI wrote the text.
+
+## D17 — Superseded alerts
+An alert's fingerprint is `hash(profile, rule_id, sorted evidence ids)`. When new evidence arrives (another eGFR result), the problem is re-detected with a new fingerprint. The old alert is marked as superseded and hidden instead of being shown as "resolved". A "reviewed — intentional" alert therefore stays suppressed until its evidence changes, as spec §8 requires.
+
+## D18 — What doctors see of alerts
+A doctor sees an alert only if every piece of its evidence is inside their scoped record (for example, an allergy-conflict alert needs both the `allergies` and `medications` scopes). Only verified doctors with active consent can mark alerts "reviewed — intentional" (a note is required) or resolved. Patients can view alerts and re-run checks.
+
+## D19 — Kidney drift and the metformin drug–lab rule are one alert
+eGFR (primary) and creatinine share the `kidney` drift group. When metformin is active and eGFR is below 45, or projected to cross 45 within 12 months, the same alert becomes "Kidney function declining across labs while on metformin — review metformin dose". Below 30 it becomes critical. A standalone metformin alert fires only when eGFR is below 45 without a drift.

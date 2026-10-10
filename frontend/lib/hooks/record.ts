@@ -64,3 +64,10 @@ export function useReviewQueue(id: string, enabled = true) {
 export function orgColor(colors: OrgColors | undefined, org: string | null | undefined): string {
   return (org && colors?.[org]) || "#64748b";
 }
+
+export function useAlerts(id: string, include: "active" | "all" = "active") {
+  return useQuery({
+    queryKey: ["alerts", id, include],
+    queryFn: () => api.get<import("@/lib/record-types").AlertRow[]>(`/profiles/${id}/alerts?include=${include}`),
+  });
+}

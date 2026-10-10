@@ -30,3 +30,5 @@ addopts = "-m 'not ai'"
 [tool.ruff.lint.per-file-ignores]
 # Long literal strings are the synthetic documents' printed text.
 "scripts/generate_demo_docs.py" = ["E501"]
+# Explanation templates are prose; wrapping them hurts readability.
+"app/services/safety/explain.py" = ["E501"]
