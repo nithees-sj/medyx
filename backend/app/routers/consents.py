@@ -92,6 +92,24 @@ async def expire_stale(db: AsyncSession) -> int:
     return len(rows)
 
 
+async def _replace_previous(db: AsyncSession, c: Consent) -> None:
+    """One active consent per (patient, doctor): a new share or approval replaces the old one."""
+    previous = (
+        await db.scalars(
+            select(Consent).where(
+                Consent.profile_id == c.profile_id,
+                Consent.doctor_user_id == c.doctor_user_id,
+                Consent.status == "active",
+                Consent.id != c.id,
+            )
+        )
+    ).all()
+    for old in previous:
+        old.status = "revoked"
+        old.revoked_at = utcnow()
+        mirror_consent(old.id)
+
+
 # ─────────────────────────────── patient: QR share ───────────────────────────────
 
 
@@ -216,6 +234,7 @@ async def claim_share(
     c.doctor_user_id = doctor.id
     c.status = "active"
     c.expires_at = now + timedelta(hours=c.duration_hours)
+    await _replace_previous(db, c)
     profile = await db.get(HealthProfile, c.profile_id)
     assert profile is not None
     dp = doctor.doctor_profile
@@ -415,6 +434,7 @@ async def approve_request(
     c.status = "active"
     c.granted_by_user_id = user.id
     c.expires_at = utcnow() + timedelta(hours=duration)
+    await _replace_previous(db, c)
     await log_event(
         db,
         profile_id=profile.id,

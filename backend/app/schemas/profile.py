@@ -32,3 +32,14 @@ class ProfileSummaryOut(ProfileOut):
     critical_alerts: int = 0
     documents: int = 0
     pending_review: int = 0
+
+
+class AccessInfo(BaseModel):
+    is_owner: bool
+    scopes: list[str]
+    can_write: bool
+    expires_at: datetime | None = None
+
+
+class ProfileWithAccessOut(ProfileSummaryOut):
+    access: AccessInfo | None = None

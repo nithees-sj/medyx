@@ -97,3 +97,18 @@ Postgres rows are the source of truth for enforcement. FHIR `Consent` and `Audit
 
 ## D22 — Access requests by email
 Requests match exact HealthThread IDs or exact account emails only, case-insensitively, with no suggestions. An email that manages several profiles returns 409, asking for the HealthThread ID, so a request can never land on the wrong family member. Unknown identifiers get the same generic 404.
+
+## D23 — Fallback model for quota exhaustion
+`GEMINI_FALLBACK_MODEL` (default `gemini-3.5-flash-lite`) is tried when the primary model's quota won't recover within the allowed wait (for example, the free tier's daily cap). Every answer is still a real model output: this is resilience, not a canned response. Streaming chat falls back only before any text has been sent.
+
+## D24 — Prescribe-time checks run on the full record, with redaction
+The draft-prescription check runs every rule against the **whole** record, not just the doctor's scoped view, because safety comes first. If a conflict involves something outside the doctor's consent (for example, an allergy when `allergies` wasn't shared), the doctor sees "Possible conflict with information outside your access — ask the patient" without the hidden details. Saving over a visible critical alert requires an override reason, which is stored in the audit log and the MedicationRequest note.
+
+## D25 — One active consent per doctor and patient
+Claiming a new QR share or approving a request automatically revokes any earlier active consent between the same doctor and patient, so scopes and expiry are never ambiguous.
+
+## D26 — Next.js rewrite proxy timeout
+`experimental.proxyTimeout` is set to 180 s. The default 30 s cut off AI calls that wait in the free-tier rate limiter, and long chat streams.
+
+## D27 — Copilot grounding
+The chat, summary and insights prompts are built only from `get_scoped_record()` output. Every digest line carries a stable `[Type/id]` citation key. Keys in answers are checked against the digest: unknown keys are flagged in the UI and the server log, and summary lines without a valid citation are marked "no source cited".

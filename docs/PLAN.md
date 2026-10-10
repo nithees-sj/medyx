@@ -58,11 +58,11 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] ✅ §10.3 tests; revocation immediate; emergency fields only + owner notified
 
 ## Phase 7 — Doctor portal + Copilot
-- [ ] Risk-sorted dashboard; workspace tabs; specialty summary
-- [ ] SSE chat with citation chips → viewer; drafts → notes
-- [ ] Doctor upload; prescribe drawer with live check + override reason + PDF
-- [ ] Panel insights (function calling)
-- [ ] ✅ Spec §19 Phase 7 prompts
+- [x] Risk-sorted dashboard; workspace tabs; specialty summary
+- [x] SSE chat with citation chips → viewer; drafts → notes
+- [x] Doctor upload; prescribe drawer with live check + override reason + PDF
+- [x] Panel insights (function calling)
+- [x] ✅ Spec §19 Phase 7 prompts
 
 ## Phase 8 — Polish and demo readiness
 - [ ] Landing page; seed `--reset` / `--stage live`; README; ARCHITECTURE.md; DEMO_SCRIPT.md

@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
     // Authenticated screens render behind a client-side role check, so they are
     // intentionally not instant. Only validate segments that opt in via `instant`.
     instantInsights: { validationLevel: "manual-warning" },
+    // AI requests can wait in the backend's rate limiter, and chat answers stream; the default
+    // 30 s rewrite-proxy timeout would cut them off.
+    proxyTimeout: 180_000,
   },
   turbopack: {
     rules: {

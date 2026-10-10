@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     # AI
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.5-flash"
+    # Used when the primary model's quota is exhausted (each model has its own free-tier quota).
+    gemini_fallback_model: str = ""
     ai_timeout_seconds: float = 120.0
     # Requests/minute allowed by the key's quota. Free Gemini tier = 5; raise it on a paid key.
     ai_requests_per_minute: int = 5

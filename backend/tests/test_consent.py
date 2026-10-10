@@ -336,3 +336,14 @@ async def test_emergency_card_flow(client, db, world):
     assert (await client.get(f"/api/emergency/{new}")).status_code == 404
     login(client, world["doctor"])
     assert (await client.post(f"/api/profiles/{pid}/emergency/enable")).status_code == 403
+
+
+async def test_new_share_replaces_previous_consent_for_same_doctor(client, db, world):
+    await share_and_claim(client, world, ["labs"])
+    await share_and_claim(client, world, ALL_FOUR)
+    active = (
+        await db.scalars(select(Consent).where(Consent.profile_id == world["pid"], Consent.status == "active"))
+    ).all()
+    assert len(active) == 1 and sorted(active[0].scopes) == ALL_FOUR
+    patients = (await client.get("/api/doctor/patients")).json()
+    assert len(patients) == 1

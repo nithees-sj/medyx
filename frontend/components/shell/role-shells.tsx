@@ -1,6 +1,8 @@
 "use client";
 
 import { ShieldCheck, Stethoscope } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { RoleGuard } from "@/components/auth/role-guard";
 import { AppHeader } from "@/components/shell/app-header";
@@ -33,7 +35,9 @@ export function DoctorShell({ children }: { children: React.ReactNode }) {
                 <Stethoscope className="size-3" /> Doctor portal
               </Badge>
             }
-          />
+          >
+            <DoctorNav />
+          </AppHeader>
           <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-6">{children}</div>
         </>
       )}
@@ -59,5 +63,35 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </>
       )}
     </RoleGuard>
+  );
+}
+
+function DoctorNav() {
+  const pathname = usePathname();
+  const links = [
+    { href: "/doctor", label: "Patients" },
+    { href: "/doctor/requests", label: "Requests" },
+    { href: "/doctor/profile", label: "Profile" },
+  ];
+  return (
+    <nav aria-label="Doctor portal" className="ml-2 flex gap-1">
+      {links.map((l) => {
+        const active = l.href === "/doctor" ? pathname === "/doctor" || pathname.startsWith("/doctor/patients") : pathname.startsWith(l.href);
+        return (
+          <Link
+            key={l.href}
+            href={l.href}
+            aria-current={active ? "page" : undefined}
+            className={
+              active
+                ? "rounded-md bg-accent px-2.5 py-1.5 text-sm font-medium"
+                : "rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+            }
+          >
+            {l.label}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

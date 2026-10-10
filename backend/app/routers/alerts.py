@@ -11,7 +11,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db import get_db
 from app.deps import client_ip, current_user
 from app.models import Alert, User
-from app.rate_limit import AI_LIMIT, limiter
 from app.services.audit import audit_view, log_event
 from app.services.consent import get_scoped_record, resolve_access
 from app.services.ingest.pipeline import profile_lock
@@ -97,45 +96,3 @@ async def review_alert(
     )
     await db.commit()
     return engine.alert_json(alert)
-
-
-class DraftIn(BaseModel):
-    drug: str = Field(min_length=2, max_length=200)
-    strength: str | None = Field(default=None, max_length=50)
-    frequency: str | None = Field(default=None, max_length=50)
-    duration: int | None = Field(default=None, ge=1, le=3650)
-
-
-@router.post("/profiles/{profile_id}/prescriptions/check")
-@limiter.limit(AI_LIMIT)
-async def check_prescription(
-    profile_id: uuid.UUID,
-    body: DraftIn,
-    request: Request,
-    user: User = Depends(current_user),
-    db: AsyncSession = Depends(get_db),
-) -> dict[str, Any]:
-    access, record = await get_scoped_record(db, profile_id, user)
-    org = access.user.doctor_profile.organization if access.user.doctor_profile else None
-    draft = engine.draft_medication(body.drug, body.strength, body.frequency, body.duration, org, engine.today())
-    findings = engine.check_draft(record, draft)
-    return {
-        "draft": {
-            "generic": draft.generic,
-            "brand": draft.brand,
-            "display": draft.display,
-            "classes": sorted(draft.classes),
-        },
-        "alerts": [
-            {
-                "rule_id": f.rule_id,
-                "type": f.type,
-                "severity": f.severity,
-                "title": f.title,
-                "patient_text": f.patient_text,
-                "clinical_text": f.clinical_text,
-                "evidence": [e.json() for e in f.evidence if e.ref != draft.ref],
-            }
-            for f in findings
-        ],
-    }

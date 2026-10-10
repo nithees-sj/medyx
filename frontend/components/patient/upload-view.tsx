@@ -26,7 +26,7 @@ export const STAGES = [
 
 const ACCEPT = "application/pdf,image/jpeg,image/png";
 
-export function UploadView({ profileId, base }: { profileId: string; base: string }) {
+export function UploadView({ profileId, base }: { profileId: string; base?: string }) {
   const [results, setResults] = useState<UploadResult[]>([]);
   const [dragging, setDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -108,7 +108,7 @@ export function UploadView({ profileId, base }: { profileId: string; base: strin
             <h2 className="text-sm font-medium text-muted-foreground">
               {allFinished ? "All done" : `Processing ${tracked.filter((t) => t.live && !finished.includes(t)).length} of ${tracked.length}`}
             </h2>
-            {allFinished && (
+            {allFinished && base && (
               <div className="flex gap-2">
                 {needsReview && (
                   <Link href={`${base}/review`} className={buttonVariants({ size: "sm", variant: "outline" })}>

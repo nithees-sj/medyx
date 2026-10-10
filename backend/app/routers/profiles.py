@@ -8,7 +8,7 @@ from app.db import get_db
 from app.deps import require_patient
 from app.models import Alert, Document, ExtractionItem, HealthProfile, User
 from app.schemas.auth import ProfileIn
-from app.schemas.profile import ProfileOut, ProfileSummaryOut
+from app.schemas.profile import AccessInfo, ProfileOut, ProfileSummaryOut, ProfileWithAccessOut
 from app.services import fhir_resources
 from app.services.consent import Access, owner_access, profile_access
 from app.services.fhir_client import get_fhir
@@ -75,12 +75,33 @@ async def add_profile(
     return profile
 
 
-@router.get("/{profile_id}", response_model=ProfileSummaryOut)
+@router.get("/{profile_id}", response_model=ProfileWithAccessOut)
 async def get_profile(
     profile_id: uuid.UUID, access: Access = Depends(profile_access), db: AsyncSession = Depends(get_db)
-) -> ProfileSummaryOut:
+) -> ProfileWithAccessOut:
     # Demographics are always part of any consent.
-    return (await _summaries(db, [access.profile]))[0]
+    summary = (await _summaries(db, [access.profile]))[0]
+    out = ProfileWithAccessOut(**summary.model_dump(exclude={"age"}))
+    out.access = AccessInfo(
+        is_owner=access.is_owner,
+        scopes=sorted(access.scopes),
+        can_write=access.can_write,
+        expires_at=access.consent.expires_at if access.consent else None,
+    )
+    if not access.is_owner:
+        # Counts a doctor sees must not reveal out-of-scope data.
+        from app.routers.alerts import visible_to
+        from app.services.consent import filter_record
+        from app.services.record import load_record
+
+        record = filter_record(await load_record(db, access.profile), access.scopes)
+        alerts = (await db.scalars(select(Alert).where(Alert.profile_id == profile_id, Alert.status == "active"))).all()
+        visible = [a for a in alerts if not (a.details or {}).get("superseded_by") and visible_to(record, a)]
+        out.active_alerts = len(visible)
+        out.critical_alerts = sum(a.severity == "critical" for a in visible)
+        out.documents = len(record.listable_document_ids)
+        out.pending_review = 0
+    return out
 
 
 @router.patch("/{profile_id}", response_model=ProfileOut)
