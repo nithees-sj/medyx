@@ -26,3 +26,7 @@ asyncio_default_test_loop_scope = "session"
 testpaths = ["tests"]
 markers = ["integration: needs the docker stack (Postgres + HAPI)", "ai: makes real Gemini calls"]
 addopts = "-m 'not ai'"
+
+[tool.ruff.lint.per-file-ignores]
+# Long literal strings are the synthetic documents' printed text.
+"scripts/generate_demo_docs.py" = ["E501"]

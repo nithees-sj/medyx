@@ -29,8 +29,8 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] ✅ Auth tests; demo 404 check; unverified doctor gets nothing clinical; (real Google sign-in: ⏳ waiting on a GOOGLE_CLIENT_ID from the product owner)
 
 ## Phase 2 — Synthetic data
-- [ ] `scripts/generate_demo_docs.py` → 9 Rajan + 3 Lakshmi files
-- [ ] ✅ Visually distinct orgs; legible handwriting
+- [x] `scripts/generate_demo_docs.py` → 9 Rajan + 3 Lakshmi files
+- [x] ✅ Visually distinct orgs; legible handwriting
 
 ## Phase 3 — Smart Ingest
 - [ ] Upload API (MIME sniffing, 15 MB / 20 pages, sha256 dedupe)

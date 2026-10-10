@@ -39,3 +39,13 @@ Next.js 16 renamed the Middleware file convention to **Proxy** (`proxy.ts`, `exp
 
 ## D7 — Next.js 16 Cache Components left at scaffold default
 `create-next-app` enables `cacheComponents` and `partialPrefetching`. Authenticated screens are client components that fetch through TanStack Query, so they do not read request data on the server. Anything that uses `useSearchParams` sits behind a `<Suspense>` boundary. Because the authenticated sections only render after a client-side role check, their pages are not prerendered into the static shell. So `experimental.instantInsights.validationLevel` is set to `manual-warning` (validate only segments that opt in), which avoids dev-overlay noise about "dropped" segments.
+
+## D8 — Deterministic synthetic documents
+`scripts/generate_demo_docs.py` produces byte-identical files on every run and in every checkout. PDFs are rendered with reportlab's invariant mode into memory (writing by filename would put the path into the PDF `/ID`). Images use seeded RNGs (PIL's `effect_noise` uses an unseeded C RNG, so it was replaced with seeded numpy noise). This keeps `DEMO_CACHE` (keyed by sha256) valid after regeneration.
+
+## D9 — Lakshmi's control documents
+The spec asks for "3 documents from one hospital" with TSH 2.1 / 2.4 / 1.9 over 18 months. They are:
+- a 2-page OPD note (page 1: consultation with Dx and Thyronorm Rx; page 2: the attached TSH 2.1 report)
+- two later TSH-only lab reports
+
+Thyronorm is prescribed only once, so the record contains a single levothyroxine order and no duplicate-therapy false positive. The 2-page note also exercises page-level provenance.
