@@ -143,3 +143,81 @@
   }
 }
 /* vis-timeline overrides live in components/timeline/timeline.css */
+
+/* Snippet highlight inside the PDF text layer */
+.react-pdf__Page__textContent mark.ht-mark {
+  background: rgb(250 204 21 / 0.45);
+  color: transparent;
+  border-radius: 2px;
+  outline: 1.5px solid rgb(202 138 4 / 0.9);
+}
+
+/* vis-timeline, restyled to match HealthThread */
+.ht-timeline .vis-timeline {
+  border: 0;
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+.ht-timeline .vis-labelset .vis-label {
+  color: var(--foreground);
+  font-weight: 500;
+  border-color: var(--border);
+}
+.ht-timeline .vis-panel.vis-center,
+.ht-timeline .vis-panel.vis-left,
+.ht-timeline .vis-panel.vis-top,
+.ht-timeline .vis-foreground .vis-group {
+  border-color: var(--border);
+}
+.ht-timeline .vis-time-axis .vis-text {
+  color: var(--muted-foreground);
+}
+.ht-timeline .vis-time-axis .vis-grid.vis-minor {
+  border-color: color-mix(in oklch, var(--border) 60%, transparent);
+}
+.ht-timeline .vis-current-time {
+  background-color: var(--primary);
+  width: 2px;
+}
+.ht-timeline .vis-item.ht-item {
+  border-color: var(--ht-org);
+  background-color: color-mix(in srgb, var(--ht-org) 14%, white);
+  color: var(--foreground);
+  border-radius: 6px;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.ht-timeline .vis-item.ht-range {
+  border-width: 0 0 0 4px;
+  background-color: color-mix(in srgb, var(--ht-org) 18%, white);
+}
+.ht-timeline .vis-item.ht-point.vis-point {
+  background: transparent;
+  border: 0;
+}
+.ht-timeline .vis-item.vis-point .vis-dot {
+  border-color: var(--ht-org);
+  border-width: 5px;
+  border-radius: 999px;
+}
+.ht-timeline .vis-item.vis-point .vis-item-content {
+  margin-left: 4px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ht-org) 12%, white);
+}
+.ht-timeline .vis-item.vis-line {
+  border-color: var(--ht-org);
+}
+.ht-timeline .vis-item.vis-dot {
+  border-color: var(--ht-org);
+}
+.ht-timeline .vis-item.ht-abnormal {
+  font-weight: 600;
+}
+.ht-timeline .vis-item.vis-selected {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+.ht-timeline .vis-item .vis-item-content {
+  padding: 3px 6px;
+}

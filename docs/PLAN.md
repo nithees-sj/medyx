@@ -42,9 +42,9 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] ✅ One eGFR series of 4 values; 133 µmol/L → 1.50 mg/dL; Provenance everywhere; re-upload skipped; export valid
 
 ## Phase 4 — Patient portal core
-- [ ] `/app` home + profile switcher; upload with live progress; review queue
-- [ ] Timeline, trends, medications, documents viewer, settings
-- [ ] ✅ Upload → review → timeline at phone width (Playwright)
+- [x] `/app` home + profile switcher; upload with live progress; review queue
+- [x] Timeline, trends, medications, documents viewer, settings
+- [x] ✅ Upload → review → timeline at phone width (Playwright)
 
 ## Phase 5 — Safety Engine
 - [ ] 5 rules + knowledge JSON; explanations via Gemini; fingerprint idempotency

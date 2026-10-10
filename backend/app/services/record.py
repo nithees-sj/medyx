@@ -258,11 +258,12 @@ def parse_observation(res: dict[str, Any]) -> Observation:
     rr = (res.get("referenceRange") or [{}])[0]
     interp = (res.get("interpretation") or [{}])[0].get("coding", [{}])[0].get("code")
     if vq:
-        value: float | None = float(vq["value"])
+        number = float(vq["value"])
+        value: float | None = number
         unit = vq.get("code") or vq.get("unit")
         unit_display = vq.get("unit") or kb.unit_display(unit)
-        decimals = lab.decimals if lab else 2
-        value_text = f"{value:.{decimals}f} {unit_display}".strip()
+        decimals = lab.decimals if lab else (0 if number.is_integer() else 1)
+        value_text = f"{number:.{decimals}f} {unit_display}".strip()
     else:
         value, unit, unit_display, decimals = None, None, "", 0
         comps = res.get("component", [])

@@ -70,3 +70,9 @@ The provided key is on the free tier. Google's 429s showed 5 requests/min and 20
 
 ## D13 — Year-only allergy dates go to the review queue
 The Sunrise note records "Penicillin — skin rash (2022)". The model outputs `2022-01-01` and flags that only the year was given. Per spec §7.4 ("or flagged uncertain"), that item waits in the review queue until a person confirms it, so the penicillin conflict alert appears once Priya confirms. The seed script confirms it through the same review API.
+
+## D14 — Source-organisation colours
+Each hospital or lab gets a stable colour per profile, assigned in order of first appearance and used everywhere: timeline, chips, trend points. The 8-slot palette avoids the reserved status colours (red/amber/green) and the teal brand. It passes the dataviz palette validator (lightness band, chroma floor, adjacent-pair colour-vision-deficiency ΔE ≥ 8, normal-vision floor, 3:1 contrast). Colour is never the only cue: every chart has a legend and a table view.
+
+## D15 — Citation highlighting
+The viewer renders PDFs with react-pdf (PDF.js) and highlights text-layer items that appear in the quoted snippet on the cited page. If none match, or the source is a photo, a quote box shows the snippet. The review queue uses a server-rendered crop (PyMuPDF `search_for`) with the snippet boxed.

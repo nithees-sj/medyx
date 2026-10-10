@@ -235,3 +235,34 @@ async def test_strangers_cannot_upload_or_read(client, db, stub_extraction):
         assert (await client.get(f"/api/profiles/{pid}/documents")).status_code == 403
         r = await client.post(f"/api/profiles/{pid}/documents", files=[("files", ("a.pdf", b"%PDF-1.4"))])
         assert r.status_code == 403
+
+
+async def test_timeline_trends_medications_and_stop(client, db, fhir, stub_extraction):
+    _, pid = await create_owner_with_profile(client, db)
+    paths = sorted((ROOT / "demo_data" / "rajan").iterdir())
+    for r in await upload(client, pid, paths, stub_extraction):
+        await pipeline.process_document(r["document"]["id"])
+
+    orgs = (await client.get(f"/api/profiles/{pid}/orgs")).json()
+    assert list(orgs)[:2] == ["Sunrise Diabetes & Multispeciality Hospital", "Lakeview Heart Institute"]
+    assert len(set(orgs.values())) == len(orgs) == 5
+
+    tl = (await client.get(f"/api/profiles/{pid}/timeline")).json()
+    groups = {g["id"]: sum(1 for i in tl["items"] if i["group"] == g["id"]) for g in tl["groups"]}
+    assert (
+        groups["medications"] == 7 and groups["documents"] == 9 and groups["labs"] == 14
+    )  # 4 + 4 + 3 + 3 (the OPD HbA1c merged)
+    assert all(i["sources"] for i in tl["items"] if i["group"] != "documents")
+
+    trends = (await client.get(f"/api/profiles/{pid}/trends")).json()["analytes"]
+    egfr = next(a for a in trends if a["loinc"] == "33914-3")
+    assert [p["value"] for p in egfr["points"]] == [72, 61, 52, 47]
+    assert len({p["org"] for p in egfr["points"]}) == 4
+
+    meds = (await client.get(f"/api/profiles/{pid}/medications")).json()["medications"]
+    glucophage = next(m for m in meds if m["brand"] == "Glucophage")
+    assert glucophage["status"] == "active"
+    stopped = await client.post(f"/api/profiles/{pid}/medications/stop", json={"ref": glucophage["ref"]})
+    assert stopped.status_code == 200
+    meds = (await client.get(f"/api/profiles/{pid}/medications")).json()["medications"]
+    assert next(m for m in meds if m["brand"] == "Glucophage")["status"] == "stopped"

@@ -16,10 +16,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { AddProfileDialog } from "@/components/patient/add-profile-dialog";
+import { DocumentStatus } from "@/components/record/documents-view";
 import { ProfileSwitcher } from "@/components/patient/profile-switcher";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states";
 import { Card, CardContent } from "@/components/ui/card";
+import { docTypeLabel, fmtDate } from "@/lib/format";
 import { lastProfile, rememberProfile, useProfiles } from "@/lib/hooks/profiles";
+import { useDocuments } from "@/lib/hooks/record";
 import type { Profile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -102,6 +105,19 @@ function ProfileOverview({ profile: p }: { profile: Profile }) {
         />
       </div>
 
+      {p.pending_review > 0 && (
+        <Link
+          href={`${base}/review`}
+          className="flex items-center gap-3 rounded-xl border border-warning/40 bg-warning-soft p-4 text-sm focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+        >
+          <ClipboardCheck className="size-5 shrink-0 text-warning" />
+          <span>
+            <span className="font-medium">{p.pending_review} item{p.pending_review > 1 ? "s" : ""} to check.</span> We weren&apos;t fully
+            sure what a document said. Confirm before it goes into the record.
+          </span>
+        </Link>
+      )}
+
       <section className="space-y-2">
         <h2 className="text-sm font-medium text-muted-foreground">Quick actions</h2>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
@@ -115,7 +131,39 @@ function ProfileOverview({ profile: p }: { profile: Profile }) {
           <Action href={`${base}/access-log`} icon={History} label="Access log" />
         </div>
       </section>
+
+      <RecentDocuments profileId={p.id} base={base} />
     </div>
+  );
+}
+
+function RecentDocuments({ profileId, base }: { profileId: string; base: string }) {
+  const { data } = useDocuments(profileId);
+  if (!data?.length) return null;
+  return (
+    <section className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-medium text-muted-foreground">Recent documents</h2>
+        <Link href={`${base}/documents`} className="text-sm text-primary hover:underline">
+          See all {data.length}
+        </Link>
+      </div>
+      <ul className="divide-y rounded-xl border bg-card">
+        {data.slice(0, 4).map((d) => (
+          <li key={d.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+            <span className="min-w-0">
+              <span className="block truncate font-medium">
+                {docTypeLabel(d.document_type)} · {d.source_org_name ?? d.original_filename}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {d.label} · {fmtDate(d.document_date ?? d.created_at)}
+              </span>
+            </span>
+            <DocumentStatus doc={d} />
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

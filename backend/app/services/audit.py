@@ -35,3 +35,34 @@ async def log_event(
     db.add(ev)
     await db.flush()
     return ev
+
+
+_recent_views: dict[tuple[str, str, str], float] = {}
+
+
+async def audit_view(db: AsyncSession, access: Any, what: str, scopes: list[str], ip: str | None = None) -> None:
+    """Record a doctor's view of part of a record (owners viewing their own data aren't audited).
+
+    Repeated views of the same section by the same doctor within 10 minutes are collapsed,
+    so polling and tab switches don't flood the patient's access log.
+    """
+    import time
+
+    if access.is_owner:
+        return
+    key = (str(access.user.id), str(access.profile.id), what)
+    now = time.monotonic()
+    if now - _recent_views.get(key, -1e9) < 600:
+        return
+    _recent_views[key] = now
+    await log_event(
+        db,
+        profile_id=access.profile.id,
+        actor_user_id=access.user.id,
+        actor_label=access.actor_label,
+        action="view",
+        scopes=scopes,
+        details={"section": what},
+        ip=ip,
+    )
+    await db.commit()

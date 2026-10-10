@@ -3,18 +3,23 @@
 import asyncio
 import contextlib
 import uuid
+from datetime import date
 from typing import Any
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.db import get_db
-from app.deps import client_ip
-from app.services.audit import log_event
-from app.services.consent import Access, owner_access
+from app.deps import client_ip, current_user
+from app.models import User
+from app.services import views
+from app.services.audit import audit_view, log_event
+from app.services.consent import Access, get_scoped_record, owner_access
 from app.services.fhir_client import get_fhir
 from app.services.fhir_resources import validate
+from app.services.ingest.pipeline import bump_record_version, profile_lock
 
 router = APIRouter(tags=["record"])
 
@@ -103,3 +108,92 @@ async def export_record(
     )
     await db.commit()
     return bundle
+
+
+def _today() -> date:
+    return date.today()
+
+
+@router.get("/profiles/{profile_id}/orgs")
+async def organizations(
+    profile_id: uuid.UUID, user: User = Depends(current_user), db: AsyncSession = Depends(get_db)
+) -> dict[str, str]:
+    _, record = await get_scoped_record(db, profile_id, user)
+    return views.org_colors(record)
+
+
+@router.get("/profiles/{profile_id}/timeline")
+async def timeline(
+    profile_id: uuid.UUID, request: Request, user: User = Depends(current_user), db: AsyncSession = Depends(get_db)
+) -> dict[str, Any]:
+    access, record = await get_scoped_record(db, profile_id, user)
+    await audit_view(db, access, "timeline", sorted(access.scopes), client_ip(request))
+    return views.timeline(record, _today())
+
+
+@router.get("/profiles/{profile_id}/trends")
+async def trends(
+    profile_id: uuid.UUID, request: Request, user: User = Depends(current_user), db: AsyncSession = Depends(get_db)
+) -> dict[str, Any]:
+    access, record = await get_scoped_record(db, profile_id, user)
+    await audit_view(db, access, "trends", ["labs"], client_ip(request))
+    return {"analytes": views.trends(record), "org_colors": views.org_colors(record)}
+
+
+@router.get("/profiles/{profile_id}/medications")
+async def medications(
+    profile_id: uuid.UUID, request: Request, user: User = Depends(current_user), db: AsyncSession = Depends(get_db)
+) -> dict[str, Any]:
+    access, record = await get_scoped_record(db, profile_id, user)
+    await audit_view(db, access, "medications", ["medications"], client_ip(request))
+    today = _today()
+    meds = [views.medication_json(m, today) for m in record.medications]
+    meds.sort(key=lambda m: (m["status"] != "active", m["start"] or ""), reverse=False)
+    return {"medications": meds, "org_colors": views.org_colors(record)}
+
+
+class StopMedicationIn(BaseModel):
+    ref: str
+
+
+@router.post("/profiles/{profile_id}/medications/stop")
+async def stop_medication(
+    profile_id: uuid.UUID,
+    body: StopMedicationIn,
+    request: Request,
+    access: Access = Depends(owner_access),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """The patient/caregiver records that a medicine is no longer being taken."""
+    rtype, _, rid = body.ref.partition("/")
+    if rtype != "MedicationRequest" or not rid:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Not a medication reference")
+    fhir = get_fhir()
+    async with profile_lock(access.profile.id):
+        res = await fhir.read("MedicationRequest", rid)
+        if (res.get("subject") or {}).get("reference") != f"Patient/{access.profile.fhir_patient_id}":
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Medication not found")
+        today = _today().isoformat()
+        res["status"] = "stopped"
+        for d in res.get("dosageInstruction", []):
+            bounds = d.setdefault("timing", {}).setdefault("repeat", {}).setdefault("boundsPeriod", {})
+            bounds["end"] = today
+        res.setdefault("note", []).append({"text": f"Marked as stopped by {access.user.name} on {today}"})
+        await fhir.update(res)
+        await bump_record_version(db, access.profile)
+        await log_event(
+            db,
+            profile_id=access.profile.id,
+            actor_user_id=access.user.id,
+            actor_label=access.actor_label,
+            action="upload",
+            scopes=["medications"],
+            details={"medication_stopped": body.ref},
+            ip=client_ip(request),
+        )
+        await db.commit()
+        from app.services.ingest.pipeline import post_write_hooks
+
+        for hook in post_write_hooks:
+            await hook(db, access.profile)
+    return {"ok": True, "ref": body.ref, "status": "stopped"}

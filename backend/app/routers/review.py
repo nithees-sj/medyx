@@ -19,9 +19,10 @@ from app.services.ingest.pipeline import post_write_hooks, profile_lock, write_i
 
 router = APIRouter(tags=["review"])
 
-EDITABLE: dict[str, set[str]] = {
-    "Condition": {"text", "icd10_guess", "onset_date", "clinical_status"},
-    "MedicationRequest": {
+# Field order is the order shown in the review form.
+EDITABLE: dict[str, list[str]] = {
+    "Condition": ["text", "icd10_guess", "onset_date", "clinical_status"],
+    "MedicationRequest": [
         "brand",
         "generic_molecule",
         "strength",
@@ -30,10 +31,10 @@ EDITABLE: dict[str, set[str]] = {
         "duration_days",
         "start_date",
         "instructions",
-    },
-    "AllergyIntolerance": {"substance", "reaction", "criticality", "recorded_date"},
-    "Observation": {"test_name_as_written", "value", "unit_as_written", "reference_range_text", "specimen_date"},
-    "Vital": {"name", "value", "unit", "date"},
+    ],
+    "AllergyIntolerance": ["substance", "reaction", "criticality", "recorded_date"],
+    "Observation": ["test_name_as_written", "value", "unit_as_written", "reference_range_text", "specimen_date"],
+    "Vital": ["name", "value", "unit", "date"],
 }
 
 
@@ -86,7 +87,7 @@ async def review_queue(
             resource_type=i.resource_type,
             raw=i.payload["raw"],
             normalized=i.payload["normalized"],
-            editable=sorted(EDITABLE.get(i.resource_type, set())),
+            editable=EDITABLE.get(i.resource_type, []),
             confidence=i.confidence,
             page=i.page,
             snippet=i.source_snippet,
@@ -122,7 +123,7 @@ async def review_item(
         if body.action == "correct":
             if not body.fields:
                 raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Nothing to correct")
-            unknown = set(body.fields) - EDITABLE.get(item.resource_type, set())
+            unknown = set(body.fields) - set(EDITABLE.get(item.resource_type, []))
             if unknown:
                 raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"Can't edit: {', '.join(sorted(unknown))}")
             raw.update(body.fields)
