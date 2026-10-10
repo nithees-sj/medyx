@@ -32,6 +32,7 @@
     "vis-timeline": "^8.5.4"
   },
   "devDependencies": {
+    "@next/env": "^16.4.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

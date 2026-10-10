@@ -4,9 +4,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.config import get_settings
-from app.routers import health
+from app.middleware import CSRFHeaderMiddleware
+from app.rate_limit import limiter
+from app.routers import admin, auth, doctor, health, notifications, onboarding, profiles
 from app.services.fhir_client import get_fhir
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -22,6 +26,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(title="HealthThread API", lifespan=lifespan)
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
+    app.add_middleware(CSRFHeaderMiddleware)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[settings.app_base_url],
@@ -29,7 +36,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.include_router(health.router, prefix="/api")
+    for r in (health, auth, onboarding, profiles, admin, notifications, doctor):
+        app.include_router(r.router, prefix="/api")
     return app
 
 

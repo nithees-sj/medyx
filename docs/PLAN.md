@@ -19,14 +19,14 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] ✅ `GET :8080/fhir/metadata` → CapabilityStatement; frontend shows backend health
 
 ## Phase 1 — Google OAuth + roles
-- [ ] SQLAlchemy models + migration for all §6.1 tables
-- [ ] `POST /api/auth/google`, `GET /api/auth/me`, `POST /api/auth/logout`, session JWT cookie
-- [ ] `POST /api/auth/demo` (404 when `DEMO_MODE=false`), demo personas
-- [ ] Onboarding: patient → health profile + FHIR Patient + HealthThread ID; doctor → pending
-- [ ] `ADMIN_EMAILS` auto-admin; admin verification → FHIR Practitioner
-- [ ] Guards: `current_user`, `require_role`, `require_verified_doctor`, CSRF header
-- [ ] Next middleware with `?next=` redirect; `/login`, `/onboarding`, `/admin`, dashboards
-- [ ] ✅ Auth tests; demo 404 check; unverified doctor gets nothing clinical; (real Google sign-in when a client ID is provided)
+- [x] SQLAlchemy models + migration for all §6.1 tables
+- [x] `POST /api/auth/google`, `GET /api/auth/me`, `POST /api/auth/logout`, session JWT cookie
+- [x] `POST /api/auth/demo` (404 when `DEMO_MODE=false`), demo personas
+- [x] Onboarding: patient → health profile + FHIR Patient + HealthThread ID; doctor → pending
+- [x] `ADMIN_EMAILS` auto-admin; admin verification → FHIR Practitioner
+- [x] Guards: `current_user`, `require_role`, `require_verified_doctor`, CSRF header
+- [x] Next middleware with `?next=` redirect; `/login`, `/onboarding`, `/admin`, dashboards
+- [x] ✅ Auth tests; demo 404 check; unverified doctor gets nothing clinical; (real Google sign-in: ⏳ waiting on a GOOGLE_CLIENT_ID from the product owner)
 
 ## Phase 2 — Synthetic data
 - [ ] `scripts/generate_demo_docs.py` → 9 Rajan + 3 Lakshmi files

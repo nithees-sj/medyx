@@ -30,3 +30,4 @@ frontend/playwright-report/
 .DS_Store
 .idea/
 .vscode/
+e2e/screenshots/

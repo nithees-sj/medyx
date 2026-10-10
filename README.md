@@ -35,3 +35,21 @@ npm run dev                       # http://localhost:3000
 
 Check the services: `curl localhost:8000/api/health` and `curl localhost:8080/fhir/metadata`.
 To start over with empty databases, run `docker compose down -v`.
+
+## Google sign-in setup
+HealthThread uses the Google Identity Services **ID-token flow**, so no client secret is needed.
+
+1. Open Google Cloud Console → **APIs & Services → OAuth consent screen**. Choose **External**, keep the app in *Testing*, and add your Google account(s) under **Test users**.
+2. Go to **APIs & Services → Credentials → Create credentials → OAuth client ID**.
+3. Set the application type to **Web application**.
+4. Under **Authorized JavaScript origins**, add `http://localhost:3000` and your deployed URL, if you have one. You don't need any redirect URIs.
+5. Copy the client ID into `.env` as **both** `GOOGLE_CLIENT_ID` and `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, then restart the backend and frontend.
+6. Put your own Google email in `ADMIN_EMAILS` to become an admin on first sign-in.
+
+With `DEMO_MODE=true`, the login page also shows one-click **demo accounts** (Priya, Dr. Meena, Dr. Arjun, Admin). `POST /api/auth/demo` returns 404 when `DEMO_MODE=false`.
+
+## Tests
+```bash
+cd backend && .venv/bin/pytest          # API + unit tests (uses the healththread_test database)
+backend/.venv/bin/python e2e/phase1.py   # browser walkthrough (stack must be running)
+```
