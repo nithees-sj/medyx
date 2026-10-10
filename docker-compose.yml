@@ -1,0 +1,44 @@
+name: healththread
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: healththread
+      POSTGRES_PASSWORD: healththread
+      POSTGRES_DB: healththread
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healththread -d healththread"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  hapi:
+    image: hapiproject/hapi:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      spring.datasource.url: jdbc:postgresql://postgres:5432/hapi
+      spring.datasource.username: hapi
+      spring.datasource.password: hapi
+      spring.datasource.driverClassName: org.postgresql.Driver
+      spring.jpa.properties.hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+      spring.jpa.properties.hibernate.search.enabled: "false"
+      hapi.fhir.fhir_version: R4
+      hapi.fhir.server_address: http://localhost:8080/fhir
+      hapi.fhir.allow_external_references: "true"
+      hapi.fhir.client_id_strategy: ALPHANUMERIC
+      hapi.fhir.cors.allowed_origin: "*"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

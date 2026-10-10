@@ -1,0 +1,32 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# App data
+storage/
+backend/storage/
+frontend/e2e/screenshots/
+frontend/test-results/
+frontend/playwright-report/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
