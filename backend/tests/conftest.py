@@ -8,7 +8,6 @@ get_settings.cache_clear()
 
 import httpx  # noqa: E402
 import pytest  # noqa: E402
-from sqlalchemy import text  # noqa: E402
 
 import app.models  # noqa: E402,F401
 from app.db import Base, SessionLocal, engine  # noqa: E402
@@ -35,9 +34,10 @@ async def _schema():
 @pytest.fixture(autouse=True)
 async def _clean_tables():
     yield
-    names = ", ".join(t.name for t in reversed(Base.metadata.sorted_tables))
+    # DELETE (children first) is far cheaper than TRUNCATE for the handful of rows a test writes.
     async with engine.begin() as conn:
-        await conn.execute(text(f"TRUNCATE {names} CASCADE"))
+        for table in reversed(Base.metadata.sorted_tables):
+            await conn.execute(table.delete())
 
 
 @pytest.fixture(autouse=True)
@@ -60,6 +60,19 @@ def _no_background_ai(monkeypatch):
     monkeypatch.setattr("app.services.safety.engine.schedule_explanations", lambda *a, **k: None)
     # FHIR Consent/AuditEvent mirroring runs as background tasks in the app; tests call it explicitly.
     monkeypatch.setattr("app.services.mirror._spawn", lambda coro: coro.close())
+    # Doctor verification also runs in the background in the app; tests run it explicitly.
+    monkeypatch.setattr("app.services.verification.service._spawn", lambda coro: coro.close())
+
+
+@pytest.fixture(autouse=True)
+def _telemetry():
+    from app.services import telemetry
+    from app.services.verification import registry
+
+    telemetry.reset()
+    yield
+    telemetry.reset()
+    registry.set_provider(None)
 
 
 @pytest.fixture

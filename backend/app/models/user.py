@@ -1,13 +1,15 @@
 import uuid
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, utcnow
 
 ROLES = ("patient", "doctor", "admin")
-VERIFICATION_STATUSES = ("pending", "verified", "rejected")
+VERIFICATION_STATUSES = ("pending", "verified", "rejected", "suspended")
 
 
 class User(Base):
@@ -46,6 +48,12 @@ class DoctorProfile(Base):
     review_note: Mapped[str | None] = mapped_column(Text)
     fhir_practitioner_id: Mapped[str | None] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    # How the current status was reached: "automatic", "admin", "demo", "registry recheck".
+    verification_method: Mapped[str | None] = mapped_column(String(40))
+    # Latest automated assessment: {"decision", "risk", "reasons", "ran_at"}.
+    verification_summary: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    last_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    next_check_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     user: Mapped[User] = relationship(back_populates="doctor_profile", foreign_keys=[user_id])
 

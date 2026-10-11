@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.db import get_db, utcnow
-from app.deps import current_user
+from app.deps import client_ip, current_user, optional_user
 from app.models import User
 from app.rate_limit import AUTH_LIMIT, limiter
 from app.schemas.auth import (
@@ -17,8 +17,10 @@ from app.schemas.auth import (
     MeOut,
 )
 from app.security import clear_session_cookie, set_session_cookie
+from app.services import telemetry
 from app.services.demo import PERSONAS, ensure_persona
 from app.services.google_auth import GoogleAuthError, verify_google_token
+from app.services.verification.matching import councils
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -53,6 +55,7 @@ async def auth_config() -> AuthConfigOut:
         google_client_id=s.google_client_id or None,
         personas=[{"key": p.key, "label": p.label} for p in PERSONAS.values()] if s.demo_mode else [],
         specialties=SPECIALTIES,
+        councils=[c.name for c in councils()],
     )
 
 
@@ -64,6 +67,7 @@ async def google_login(
     try:
         claims = await verify_google_token(body.credential)
     except GoogleAuthError as e:
+        telemetry.event("login_failed", f"Google sign-in rejected: {e}", severity="warning", ip=client_ip(request))
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, str(e)) from e
 
     user = await db.scalar(select(User).where(User.google_sub == claims["sub"]))
@@ -76,9 +80,17 @@ async def google_login(
         user.name = claims["name"]
     if user.role is None and claims["email"].lower() in get_settings().admin_email_set:
         user.role = "admin"
+    first = user.last_login_at is None
     user.last_login_at = utcnow()
     await db.commit()
     await db.refresh(user)
+    telemetry.event(
+        "login",
+        f"{user.name} signed in with Google" + (" for the first time" if first else ""),
+        user_id=user.id,
+        details={"method": "google", "role": user.role},
+        ip=client_ip(request),
+    )
     return start_session(response, user)
 
 
@@ -93,6 +105,13 @@ async def demo_login(
     user.last_login_at = utcnow()
     await db.commit()
     await db.refresh(user)
+    telemetry.event(
+        "login",
+        f"{user.name} signed in (demo account)",
+        user_id=user.id,
+        details={"method": "demo", "role": user.role},
+        ip=client_ip(request),
+    )
     return start_session(response, user)
 
 
@@ -102,7 +121,9 @@ async def me(user: User = Depends(current_user)) -> MeOut:
 
 
 @router.post("/logout", status_code=204)
-async def logout(response: Response) -> Response:
+async def logout(response: Response, user: User | None = Depends(optional_user)) -> Response:
+    if user is not None:
+        telemetry.event("logout", f"{user.name} signed out", user_id=user.id)
     clear_session_cookie(response)
     response.status_code = 204
     return response

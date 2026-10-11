@@ -6,7 +6,7 @@ export interface DoctorInfo {
   organization: string;
   council: string;
   registration_number: string;
-  verification_status: "pending" | "verified" | "rejected";
+  verification_status: "pending" | "verified" | "rejected" | "suspended";
   review_note: string | null;
   verified_at: string | null;
 }
@@ -31,6 +31,7 @@ export interface AuthConfig {
   google_client_id: string | null;
   personas: { key: string; label: string }[];
   specialties: string[];
+  councils: string[];
 }
 
 export interface Profile {

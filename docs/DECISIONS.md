@@ -118,3 +118,18 @@ The chat, summary and insights prompts are built only from `get_scoped_record()`
 
 ## D29 — Patient-side "Explain simply"
 Spec §9.5 (bonus) asks for a plain-language explainer. `POST /documents/{id}/explain` (owner only) builds the prompt only from items extracted from that one document, in English, Tamil or Hindi, with the same `[Type/id]` citation check as the copilot. It is labelled "not medical advice".
+
+## D30 — Automated doctor verification
+The spec has admins verify every doctor by hand, which doesn't scale. Verification now collects five pieces of evidence: details format, unique registration, medical register, work-email identity and the certificate. A pure rule table (`services/verification/policy.py`) decides. Rules approve only when an official register confirms an active licence **and** the person is bound to a hospital by a trusted, Google-verified email domain. They reject only when the register itself says the registration doesn't exist or isn't active. Everything else goes to admins with a risk level. AI reads certificates but never decides. Graduation certificates are not used as proof: a degree isn't a licence, and reading a document can't detect forgery. See docs/VERIFICATION.md.
+
+## D31 — Register connector is a documented contract, not a guessed vendor API
+No NMC/state-council API is published openly, and the vendors' request and response formats aren't public. So instead of guessing a vendor API, HealthThread defines one small JSON contract (`REGISTRY_PROVIDER=http`) that a vendor or a thin adapter can satisfy. Until it's configured, the register check reports "not configured" and nothing is auto-approved on register grounds. Verified doctors are re-checked periodically. A disappearing or inactive registration suspends the doctor and ends their shares, while a register outage decides nothing.
+
+## D32 — Admin monitoring without clinical access
+Spec §3 and §13 say admins have no clinical data access. The admin console shows platform activity, but only as metadata:
+- **Patient identity:** patients appear only as pseudonymous HealthThread IDs.
+- **Audit details:** passed through an allow-list (document labels, scope categories, share durations, alert statuses). Medicine names, alert titles, questions, notes, file names and free-text purposes are dropped.
+- **FHIR errors:** reduced to their status code.
+- **Telemetry:** requests, AI calls and system events record only the route template, status, latency, model and token counts. Rows go into in-memory buffers, are flushed to Postgres every 2 s, and are kept for `TELEMETRY_RETENTION_DAYS`. A failed flush loses at most those few seconds of telemetry, which is acceptable for monitoring data.
+
+A test asserts that clinical strings never reach the activity feed or pipeline views.

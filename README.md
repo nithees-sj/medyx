@@ -25,7 +25,7 @@ HealthThread turns scattered medical documents (PDFs, phone photos, handwritten 
 | **3 · Clinical Copilot** | Specialty summaries, streaming chat with citation chips that open the original page with the value highlighted, and panel-wide insights through function calling. Everything is grounded only in what the doctor is allowed to see. |
 | **4 · Consent Vault** | QR or ID-based sharing with scopes (mental health is off by default), expiry, instant revoke, a patient-visible access log, FHIR Consent and AuditEvent mirroring, and a public emergency card (allergies, medicines, blood group, contact) with an owner notification on every view. |
 
-Portals: a phone-first **patient and caregiver** app (one account manages several family profiles), a desktop **doctor** portal (risk-sorted panel and split-view workspace), an **admin** console for doctor verification, and the public **emergency card**.
+Portals: a phone-first **patient and caregiver** app (one account manages several family profiles), a desktop **doctor** portal (risk-sorted panel and split-view workspace), an **admin** console (automated doctor verification plus live platform monitoring), and the public **emergency card**.
 
 ## Architecture
 
@@ -101,7 +101,7 @@ With `DEMO_MODE=true`, the login page shows one-click **demo accounts**:
 | Priya (caregiver) | Patient account managing *Priya Rajan* (self) and *Rajan Subramanian* (father) |
 | Dr. Meena Raghavan | Verified nephrologist, Kaveri Kidney Care |
 | Dr. Arjun Mehta | Doctor still waiting for verification (blocked from patient data) |
-| Admin | Doctor verification queue and system stats (no patient access) |
+| Admin | Doctor verification, activity log, system and AI monitoring (no patient access) |
 
 `POST /api/auth/demo` returns 404 when `DEMO_MODE=false`.
 
@@ -127,6 +127,20 @@ Every model call goes through `backend/app/ai/client.py`.
 - **Upload speed:** on the **free tier** (5 requests/min) the 9-document upload takes about 2 minutes. On a paid key, raise `AI_REQUESTS_PER_MINUTE`.
 - **`DEMO_CACHE=true`:** if extraction fails, the pipeline uses `backend/demo_cache/<sha256>.json`, the real recorded model output for that exact demo file. Nothing else is ever faked. If AI fails, chat, summary and insights show an error with a retry.
 
+### Admin console and doctor verification
+
+Admins see what is happening across the platform without seeing anyone's health data. Patients appear only as HealthThread IDs, and clinical details are stripped (D32).
+
+| Page | What it shows |
+|---|---|
+| **Overview** `/admin` | Last-24 h KPIs: active users, sign-ins, uploads, doctor record access, AI calls, server errors, access denials, emergency-card views. Also a 14-day activity chart, a "needs attention" list, platform totals, and sharing and emergency activity |
+| **Doctors** `/admin/doctors` | The verification queue, sorted by risk, with each doctor's evidence. Approve, reject, re-run checks, suspend or reinstate. Also trusted hospital email domains |
+| **Activity** `/admin/activity` | A live, filterable stream: clinical access, record changes, sharing, emergency, sign-ins, security (denials, rate limits, unknown links), verification and errors |
+| **System** `/admin/system` | Dependency health, background jobs, the document pipeline (with retry), API traffic per route (p50/p95, 4xx/5xx) and AI usage per feature and model (failures, rate limits, tokens, quota in use) |
+| **Users** `/admin/users` | Accounts, roles and doctor status, with search |
+
+Doctor applications are checked automatically: details, unique registration, the **medical register**, **work-email identity** and the **uploaded certificate** (read by Gemini, compared by fixed rules). Rules approve or reject only unambiguous cases; everything else waits for an admin with a risk level. Verified doctors are re-checked against the register periodically. Connecting a register takes three settings; see **[docs/VERIFICATION.md](docs/VERIFICATION.md)**.
+
 ## Environment variables
 
 | Variable | Purpose |
@@ -144,6 +158,10 @@ Every model call goes through `backend/app/ai/client.py`.
 | `DEMO_MODE` | Enables demo accounts, the seed script and the demo badge |
 | `DEMO_CACHE` | Allows the recorded-extraction fallback for the demo files |
 | `DEFAULT_TIMEZONE`, `NEXT_PUBLIC_DEFAULT_TIMEZONE` | Display timezone (UTC is stored) |
+| `REGISTRY_PROVIDER`, `REGISTRY_URL`, `REGISTRY_API_KEY` | Medical-register connection for doctor verification (`http` JSON contract; empty = not configured) |
+| `VERIFICATION_AUTO_APPROVE`, `VERIFICATION_AUTO_REJECT` | Let the rules decide clear-cut applications (default `true`) |
+| `VERIFICATION_RECHECK_DAYS` | How often verified doctors are re-checked against the register (default 30) |
+| `TELEMETRY_RETENTION_DAYS` | How long request, AI-call and system-event rows are kept for monitoring (default 30) |
 
 ## Tests
 
@@ -170,6 +188,8 @@ backend/
       ingest/        extract → normalize → merge → writer (FHIR Bundle) → pipeline/worker
       safety/        rules/*.py, engine (fingerprints, supersede), explain
       copilot/       digest (citation keys), chat (SSE), summary, insights (tools)
+      verification/  matching (names, councils), registry connector, checks, policy, service
+      telemetry.py   request / AI-call / system-event buffers → Postgres, background jobs
       consent.py     resolve_access · filter_record · get_scoped_record
       record.py      FHIR → PatientRecord dataclasses
   alembic/  scripts/ (generate_demo_docs, seed_demo)  tests/  demo_cache/
@@ -178,7 +198,7 @@ frontend/
   components/        patient/, doctor/, record/, copilot/, emergency/, shell/, ui/
   lib/               api client, hooks, types
 docker/postgres/init/  creates the healththread, hapi and healththread_test databases
-docs/                SPEC, PLAN, DECISIONS, ARCHITECTURE, DEMO_SCRIPT
+docs/                SPEC, PLAN, DECISIONS, ARCHITECTURE, DEMO_SCRIPT, VERIFICATION
 e2e/                 Playwright walkthroughs
 ```
 

@@ -92,6 +92,7 @@ async def ensure_persona(db: AsyncSession, key: str) -> User:
             dp.verification_status = "verified"
             dp.verified_at = utcnow()
             dp.review_note = "Demo persona"
+            dp.verification_method = "demo"
             practitioner = await get_fhir().create(fhir_resources.practitioner(**p.doctor))
             dp.fhir_practitioner_id = practitioner["id"]
         db.add(dp)

@@ -15,6 +15,7 @@ import {
   type ProfileFormValue,
   toProfilePayload,
 } from "@/components/profile/profile-form";
+import { CouncilList } from "@/components/doctor/verification-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
@@ -212,7 +213,8 @@ function DoctorForm({ me, onBack }: { me: Me; onBack: () => void }) {
         <BackButton onClick={onBack} />
         <CardTitle className="text-xl">Your professional details</CardTitle>
         <CardDescription>
-          An admin checks your registration before you can see any patient record.
+          We check your registration against the medical register before you can see any patient record. Signing in with
+          your hospital email speeds this up.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -240,9 +242,10 @@ function DoctorForm({ me, onBack }: { me: Me; onBack: () => void }) {
           <Field label="Hospital / clinic" htmlFor="organization" error={errors.organization}>
             <Input id="organization" value={form.organization} onChange={(e) => set("organization", e.target.value)} required />
           </Field>
-          <Field label="Medical council" htmlFor="council" error={errors.council} hint="e.g. Tamil Nadu Medical Council">
-            <Input id="council" value={form.council} onChange={(e) => set("council", e.target.value)} required />
+          <Field label="Medical council" htmlFor="council" error={errors.council} hint="Start typing, e.g. Tamil Nadu Medical Council">
+            <Input id="council" list="council-list" value={form.council} onChange={(e) => set("council", e.target.value)} required />
           </Field>
+          <CouncilList councils={config?.councils ?? []} />
           <Field label="Registration number" htmlFor="registration_number" error={errors.registration_number} hint="e.g. TNMC-58213">
             <Input
               id="registration_number"

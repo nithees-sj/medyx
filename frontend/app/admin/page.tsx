@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { AdminConsole } from "@/components/admin/admin-console";
+import { AdminOverview } from "@/components/admin/overview";
 
-export const metadata: Metadata = { title: "Admin" };
+export const metadata: Metadata = { title: "Admin · Overview" };
 
 export default function AdminPage() {
-  return <AdminConsole />;
+  return <AdminOverview />;
 }

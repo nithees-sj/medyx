@@ -228,13 +228,26 @@ async def process_document(doc_id: uuid.UUID) -> None:
             assert doc is not None
             doc.error = str(e)
             await _stage(db, doc, "Failed", "failed")
-        except Exception:
+            _failed_event(doc, type(e).__name__)
+        except Exception as e:
             log.exception("ingest failed for document %s", doc_id)
             await db.rollback()
             doc = await db.get(Document, doc_id)
             assert doc is not None
             doc.error = "Something went wrong while processing this document. Please retry."
             await _stage(db, doc, "Failed", "failed")
+            _failed_event(doc, type(e).__name__)
+
+
+def _failed_event(doc: Document, error_type: str) -> None:
+    from app.services import telemetry
+
+    telemetry.event(
+        "document_failed",
+        f"Document {doc.label} failed to process ({error_type})",
+        severity="warning",
+        details={"document_id": str(doc.id), "error_type": error_type},
+    )
 
 
 class IngestWorker:

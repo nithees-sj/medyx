@@ -65,6 +65,12 @@ class _RateLimiter:
 _limiter = _RateLimiter()
 
 
+def calls_in_last_minute() -> int:
+    """How much of the per-minute quota is in use right now (admin console)."""
+    now = time.monotonic()
+    return sum(1 for t in _limiter._calls if now - t < 60)
+
+
 def _retry_delay_seconds(err: genai_errors.APIError) -> float | None:
     """Google puts a RetryInfo.retryDelay like '42s' in 429 responses."""
     try:
@@ -128,18 +134,33 @@ def _config(
 
 
 def _log_usage(
-    purpose: str, started: float, resp: types.GenerateContentResponse | None, ok: bool, model: str | None = None
+    purpose: str,
+    started: float,
+    resp: types.GenerateContentResponse | None,
+    ok: bool,
+    model: str | None = None,
+    error: str | None = None,
 ) -> None:
+    from app.services import telemetry
+
     u = resp.usage_metadata if resp is not None else None
-    log.info(
-        "ai purpose=%s model=%s ok=%s ms=%d in=%s out=%s thought=%s",
-        purpose,
-        model or get_settings().gemini_model,
-        ok,
-        (time.monotonic() - started) * 1000,
+    model = model or get_settings().gemini_model
+    ms = int((time.monotonic() - started) * 1000)
+    tokens = (
         getattr(u, "prompt_token_count", None),
         getattr(u, "candidates_token_count", None),
         getattr(u, "thoughts_token_count", None),
+    )
+    log.info("ai purpose=%s model=%s ok=%s ms=%d in=%s out=%s thought=%s", purpose, model, ok, ms, *tokens)
+    telemetry.record_ai_call(
+        purpose=purpose,
+        model=model,
+        ok=ok,
+        duration_ms=ms,
+        input_tokens=tokens[0],
+        output_tokens=tokens[1],
+        thought_tokens=tokens[2],
+        error=error,
     )
 
 
@@ -193,7 +214,7 @@ async def _generate_on(
             _log_usage(purpose, started, resp, True, model)
             return resp
         except genai_errors.APIError as e:
-            _log_usage(purpose, started, resp, False, model)
+            _log_usage(purpose, started, resp, False, model, f"HTTP {e.code}")
             delay = _quota_delay(e)
             if delay is not None and waited + delay <= max_quota_wait:
                 log.info("ai purpose=%s model=%s busy; waiting %.0fs", purpose, model, delay)
@@ -203,11 +224,11 @@ async def _generate_on(
             if e.code in (429, 503):
                 raise _QuotaExhausted("The AI service is busy (rate limit reached). Please try again later.") from e
             raise AIError(f"AI service error ({e.code})") from e
-        except AIError:
-            _log_usage(purpose, started, resp, False, model)
+        except AIError as e:
+            _log_usage(purpose, started, resp, False, model, str(e))
             raise
         except Exception as e:  # network errors, timeouts
-            _log_usage(purpose, started, resp, False, model)
+            _log_usage(purpose, started, resp, False, model, type(e).__name__)
             raise AIError(f"AI service unavailable ({type(e).__name__})") from e
 
 
@@ -321,18 +342,18 @@ async def stream_text(
             _log_usage(purpose, started, last, True, model)
             return
         except genai_errors.APIError as e:
-            _log_usage(purpose, started, last, False, model)
+            _log_usage(purpose, started, last, False, model, f"HTTP {e.code}")
             if e.code in (429, 503) and not sent and i + 1 < len(models):
                 log.info("ai purpose=%s model=%s busy; trying fallback", purpose, model)
                 continue
             if e.code in (429, 503):
                 raise AIError("The AI service is busy (rate limit reached). Please try again later.") from e
             raise AIError(f"AI service error ({e.code})") from e
-        except AIError:
-            _log_usage(purpose, started, last, False, model)
+        except AIError as e:
+            _log_usage(purpose, started, last, False, model, str(e))
             raise
         except Exception as e:
-            _log_usage(purpose, started, last, False, model)
+            _log_usage(purpose, started, last, False, model, type(e).__name__)
             raise AIError(f"AI service unavailable ({type(e).__name__})") from e
 
 

@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { InsightsBox } from "@/components/doctor/insights-box";
 import { VerificationBanner } from "@/components/doctor/verification-banner";
+import { VerificationPanel } from "@/components/doctor/verification-panel";
 import { Sparkline } from "@/components/record/sparkline";
 import { EmptyState, ErrorState, LoadingState, PageHeader } from "@/components/states";
 import { buttonVariants } from "@/components/ui/button";
@@ -31,6 +32,7 @@ export function DoctorDashboard() {
         }
       />
       {me?.doctor && <VerificationBanner doctor={me.doctor} />}
+      {me?.doctor && <VerificationPanel doctor={me.doctor} />}
       {verified && (
         <>
           <InsightsBox />

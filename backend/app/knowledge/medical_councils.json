@@ -1,0 +1,251 @@
+{
+  "_comment": "Indian medical registration councils. Aliases are only the unambiguous short forms; `state` is matched as a phrase in free text.",
+  "councils": [
+    {
+      "id": "nmc",
+      "name": "National Medical Commission (Indian Medical Register)",
+      "aliases": [
+        "nmc",
+        "national medical commission",
+        "medical council of india",
+        "mci",
+        "indian medical register",
+        "imr",
+        "national medical register",
+        "nmr"
+      ],
+      "state": null
+    },
+    {
+      "id": "andhra_pradesh",
+      "name": "Andhra Pradesh Medical Council",
+      "aliases": [
+        "apmc",
+        "ap medical council"
+      ],
+      "state": "andhra pradesh"
+    },
+    {
+      "id": "arunachal_pradesh",
+      "name": "Arunachal Pradesh Medical Council",
+      "aliases": [],
+      "state": "arunachal pradesh"
+    },
+    {
+      "id": "assam",
+      "name": "Assam Medical Council",
+      "aliases": [
+        "assam council of medical registration"
+      ],
+      "state": "assam"
+    },
+    {
+      "id": "bihar",
+      "name": "Bihar Medical Council",
+      "aliases": [
+        "bihar council of medical registration"
+      ],
+      "state": "bihar"
+    },
+    {
+      "id": "chhattisgarh",
+      "name": "Chhattisgarh Medical Council",
+      "aliases": [],
+      "state": "chhattisgarh"
+    },
+    {
+      "id": "delhi",
+      "name": "Delhi Medical Council",
+      "aliases": [
+        "dmc"
+      ],
+      "state": "delhi"
+    },
+    {
+      "id": "goa",
+      "name": "Goa Medical Council",
+      "aliases": [],
+      "state": "goa"
+    },
+    {
+      "id": "gujarat",
+      "name": "Gujarat Medical Council",
+      "aliases": [
+        "gmc gujarat"
+      ],
+      "state": "gujarat"
+    },
+    {
+      "id": "haryana",
+      "name": "Haryana Medical Council",
+      "aliases": [
+        "haryana state medical council"
+      ],
+      "state": "haryana"
+    },
+    {
+      "id": "himachal_pradesh",
+      "name": "Himachal Pradesh Medical Council",
+      "aliases": [
+        "hpmc"
+      ],
+      "state": "himachal pradesh"
+    },
+    {
+      "id": "jammu_kashmir",
+      "name": "Jammu and Kashmir Medical Council",
+      "aliases": [
+        "jkmc",
+        "j and k medical council"
+      ],
+      "state": "jammu"
+    },
+    {
+      "id": "jharkhand",
+      "name": "Jharkhand Medical Council",
+      "aliases": [],
+      "state": "jharkhand"
+    },
+    {
+      "id": "karnataka",
+      "name": "Karnataka Medical Council",
+      "aliases": [
+        "kmc karnataka"
+      ],
+      "state": "karnataka"
+    },
+    {
+      "id": "kerala",
+      "name": "Travancore-Cochin Council of Modern Medicine (Kerala)",
+      "aliases": [
+        "tcmc",
+        "travancore cochin medical council",
+        "travancore cochin council of modern medicine",
+        "kerala medical council",
+        "kerala state medical council"
+      ],
+      "state": "kerala"
+    },
+    {
+      "id": "madhya_pradesh",
+      "name": "Madhya Pradesh Medical Council",
+      "aliases": [
+        "mpmc"
+      ],
+      "state": "madhya pradesh"
+    },
+    {
+      "id": "maharashtra",
+      "name": "Maharashtra Medical Council",
+      "aliases": [
+        "mmc"
+      ],
+      "state": "maharashtra"
+    },
+    {
+      "id": "manipur",
+      "name": "Manipur Medical Council",
+      "aliases": [],
+      "state": "manipur"
+    },
+    {
+      "id": "meghalaya",
+      "name": "Meghalaya Medical Council",
+      "aliases": [],
+      "state": "meghalaya"
+    },
+    {
+      "id": "mizoram",
+      "name": "Mizoram Medical Council",
+      "aliases": [],
+      "state": "mizoram"
+    },
+    {
+      "id": "nagaland",
+      "name": "Nagaland Medical Council",
+      "aliases": [],
+      "state": "nagaland"
+    },
+    {
+      "id": "odisha",
+      "name": "Odisha Council of Medical Registration",
+      "aliases": [
+        "orissa council of medical registration",
+        "ocmr",
+        "odisha medical council"
+      ],
+      "state": "odisha"
+    },
+    {
+      "id": "punjab",
+      "name": "Punjab Medical Council",
+      "aliases": [
+        "pmc punjab"
+      ],
+      "state": "punjab"
+    },
+    {
+      "id": "rajasthan",
+      "name": "Rajasthan Medical Council",
+      "aliases": [
+        "rmc"
+      ],
+      "state": "rajasthan"
+    },
+    {
+      "id": "sikkim",
+      "name": "Sikkim Medical Council",
+      "aliases": [],
+      "state": "sikkim"
+    },
+    {
+      "id": "tamil_nadu",
+      "name": "Tamil Nadu Medical Council",
+      "aliases": [
+        "tnmc",
+        "tn medical council"
+      ],
+      "state": "tamil nadu"
+    },
+    {
+      "id": "telangana",
+      "name": "Telangana State Medical Council",
+      "aliases": [
+        "tsmc",
+        "telangana medical council"
+      ],
+      "state": "telangana"
+    },
+    {
+      "id": "tripura",
+      "name": "Tripura State Medical Council",
+      "aliases": [],
+      "state": "tripura"
+    },
+    {
+      "id": "uttar_pradesh",
+      "name": "Uttar Pradesh Medical Council",
+      "aliases": [
+        "upmc",
+        "up medical council"
+      ],
+      "state": "uttar pradesh"
+    },
+    {
+      "id": "uttarakhand",
+      "name": "Uttarakhand Medical Council",
+      "aliases": [
+        "ukmc"
+      ],
+      "state": "uttarakhand"
+    },
+    {
+      "id": "west_bengal",
+      "name": "West Bengal Medical Council",
+      "aliases": [
+        "wbmc"
+      ],
+      "state": "west bengal"
+    }
+  ]
+}

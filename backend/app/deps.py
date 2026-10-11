@@ -23,7 +23,12 @@ async def optional_user(request: Request, db: AsyncSession = Depends(get_db)) ->
     except (KeyError, ValueError):
         return None
     # Always reload from the DB: role and verification can change after the cookie was issued.
-    return await db.get(User, user_id)
+    user = await db.get(User, user_id)
+    if user is not None:
+        # Read by the request-telemetry middleware (who made this call).
+        request.state.user_id = user.id
+        request.state.role = user.role
+    return user
 
 
 async def current_user(user: User | None = Depends(optional_user)) -> User:

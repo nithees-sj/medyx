@@ -65,6 +65,7 @@ class AuthConfigOut(BaseModel):
     google_client_id: str | None
     personas: list[dict[str, str]]
     specialties: list[str]
+    councils: list[str] = []
 
 
 class ProfileIn(BaseModel):

@@ -40,6 +40,20 @@ class Settings(BaseSettings):
     demo_cache_dir: Path = BACKEND_DIR / "demo_cache"
     demo_data_dir: Path = REPO_ROOT / "demo_data"
 
+    # Doctor verification (docs/VERIFICATION.md)
+    # "" = no register connector (checks report "not configured"); "http" = JSON adapter at REGISTRY_URL.
+    registry_provider: str = ""
+    registry_url: str = ""
+    registry_api_key: str = ""
+    registry_timeout_seconds: float = 10.0
+    # Rules may approve/reject without a human only when the evidence is unambiguous.
+    verification_auto_approve: bool = True
+    verification_auto_reject: bool = True
+    verification_recheck_days: int = 30
+
+    # Telemetry (admin monitoring): request, AI-call and system-event rows older than this are purged.
+    telemetry_retention_days: int = 30
+
     # App
     app_base_url: str = "http://localhost:3000"
     demo_mode: bool = False

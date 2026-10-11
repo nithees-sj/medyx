@@ -68,3 +68,10 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] Landing page; seed `--reset` / `--stage live`; README; ARCHITECTURE.md; DEMO_SCRIPT.md
 - [x] Patient "Explain simply" (EN/TA/HI, cited)
 - [x] ✅ Clean run (`docker compose down -v` → migrations → `seed_demo --reset --stage live`) + full §21 walkthrough (`e2e/demo.py`, real Gemini)
+
+## After Phase 8 — Doctor verification at scale + admin monitoring
+- [x] Evidence checks (format, unique registration, medical register, work email, certificate via Gemini) + rule-based decisions (D30)
+- [x] Register connector contract + periodic re-check with automatic suspension (D31)
+- [x] Doctor-side checks view, certificate upload, correct-and-resubmit
+- [x] Telemetry (requests, AI calls, system events, background jobs) + admin Overview / Doctors / Activity / System / Users (D32)
+- [x] ✅ 161 backend tests (incl. privacy boundary); `e2e/admin.py`, `e2e/doctor_verification.py`
