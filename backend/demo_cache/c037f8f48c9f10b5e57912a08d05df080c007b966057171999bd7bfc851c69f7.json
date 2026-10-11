@@ -20,7 +20,7 @@
   {
    "page": 1,
    "snippet": "S. Creatinine 1.4 H mg/dL 0.7-1.3",
-   "confidence": 0.99,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "test_name_as_written": "S. Creatinine",
    "value": 1.4,
@@ -32,7 +32,7 @@
   {
    "page": 1,
    "snippet": "GFR, estimated 52 L mL/min/1.73m² >60",
-   "confidence": 0.99,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "test_name_as_written": "GFR, estimated",
    "value": 52.0,
@@ -44,7 +44,7 @@
   {
    "page": 1,
    "snippet": "HbA1c 7.0 H % 4.0-5.6",
-   "confidence": 0.99,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "test_name_as_written": "HbA1c",
    "value": 7.0,

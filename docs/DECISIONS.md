@@ -112,3 +112,9 @@ Claiming a new QR share or approving a request automatically revokes any earlier
 
 ## D27 — Copilot grounding
 The chat, summary and insights prompts are built only from `get_scoped_record()` output. Every digest line carries a stable `[Type/id]` citation key. Keys in answers are checked against the digest: unknown keys are flagged in the UI and the server log, and summary lines without a valid citation are marked "no source cited".
+
+## D28 — Seed stages and the seed path
+`scripts/seed_demo.py` runs documents through the same service functions as the upload API: `validate_upload`, `store_document`, `process_document`, then the safety hook. Pending review items are confirmed through `apply_review`, the same function `/review` uses, acting as the profile owner. `--stage full` gives the preloaded demo. `--stage live` leaves Rajan empty and unshared, so the upload and QR share happen live. The script exits non-zero unless Rajan has exactly the 4 expected alert types and Lakshmi has 0.
+
+## D29 — Patient-side "Explain simply"
+Spec §9.5 (bonus) asks for a plain-language explainer. `POST /documents/{id}/explain` (owner only) builds the prompt only from items extracted from that one document, in English, Tamil or Hindi, with the same `[Type/id]` citation check as the copilot. It is labelled "not medical advice".

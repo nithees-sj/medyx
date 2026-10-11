@@ -1,8 +1,8 @@
 {
  "document": {
-  "type": "opd_note",
+  "type": "prescription",
   "source_organization": {
-   "name": "LAKEVIEW HEART INSTITUTE",
+   "name": "Lakeview Heart Institute",
    "address": "21 Lakeview Drive, Hebbal, Bengaluru 560 024"
   },
   "practitioner": {
@@ -17,7 +17,7 @@
   {
    "page": 1,
    "snippet": "Essential hypertension (I10)",
-   "confidence": 0.99,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "text": "Essential hypertension",
    "icd10_guess": "I10",
@@ -29,7 +29,7 @@
   {
    "page": 1,
    "snippet": "Tab. Cardace 5 mg 1-0-0 Morning",
-   "confidence": 0.98,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "written_text": "Tab. Cardace 5 mg 1-0-0 Morning",
    "brand": "Cardace",
@@ -45,14 +45,14 @@
     "as_needed": false
    },
    "duration_days": null,
-   "route": "oral",
+   "route": null,
    "start_date": "2025-01-20",
    "instructions": "Morning"
   },
   {
    "page": 1,
    "snippet": "Tab. Ecosprin 75 mg 0-1-0 After lunch",
-   "confidence": 0.98,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "written_text": "Tab. Ecosprin 75 mg 0-1-0 After lunch",
    "brand": "Ecosprin",
@@ -68,7 +68,7 @@
     "as_needed": false
    },
    "duration_days": null,
-   "route": "oral",
+   "route": null,
    "start_date": "2025-01-20",
    "instructions": "After lunch"
   }
@@ -79,7 +79,7 @@
   {
    "page": 1,
    "snippet": "BP 158/96 mmHg",
-   "confidence": 0.99,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "name": "Blood pressure",
    "value": "158/96",
@@ -89,7 +89,7 @@
   {
    "page": 1,
    "snippet": "HR 82/min",
-   "confidence": 0.99,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "name": "Pulse",
    "value": "82",

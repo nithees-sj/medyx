@@ -19,7 +19,7 @@
  "labs": [
   {
    "page": 1,
-   "snippet": "TSH (Thyroid Stimulating Hormone) 2.4 mIU/L 0.4 - 4.5",
+   "snippet": "TSH (Thyroid Stimulating Hormone)\t2.4\tmIU/L\t0.4 - 4.5",
    "confidence": 1.0,
    "uncertain_reason": null,
    "test_name_as_written": "TSH (Thyroid Stimulating Hormone)",

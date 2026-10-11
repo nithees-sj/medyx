@@ -50,7 +50,7 @@ export function MedicationsSection() {
 
 export function DocumentsSection() {
   const id = useProfileId();
-  return <DocumentsView profileId={id} reviewHref={`/app/p/${id}/review`} canRetry emptyAction={<UploadCta id={id} />} />;
+  return <DocumentsView profileId={id} reviewHref={`/app/p/${id}/review`} canRetry canExplain emptyAction={<UploadCta id={id} />} />;
 }
 
 export function AlertsSection() {

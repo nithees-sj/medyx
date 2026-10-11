@@ -98,46 +98,45 @@ async def review_queue(
     ]
 
 
-@router.post("/review/{item_id}", response_model=dict)
-async def review_item(
-    item_id: uuid.UUID,
-    body: ReviewAction,
-    request: Request,
-    user: User = Depends(current_user),
-    db: AsyncSession = Depends(get_db),
+class ReviewError(Exception):
+    def __init__(self, status_code: int, message: str):
+        super().__init__(message)
+        self.status_code = status_code
+
+
+async def apply_review(
+    db: AsyncSession, item: ExtractionItem, user: User, action: str, fields: dict[str, Any] | None, ip: str | None
 ) -> dict[str, Any]:
-    item = await db.get(ExtractionItem, item_id)
-    if item is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Item not found")
+    """Confirm / correct / reject one pending item (used by the API and the seed script)."""
     doc = await db.get(Document, item.document_id)
     assert doc is not None
     access = await resolve_access(db, doc.profile_id, user)
     access.require_write()
     if item.review_status != "pending":
-        raise HTTPException(status.HTTP_409_CONFLICT, "This item was already reviewed")
+        raise ReviewError(status.HTTP_409_CONFLICT, "This item was already reviewed")
 
-    if body.action == "reject":
+    if action == "reject":
         item.review_status = "rejected"
     else:
         raw = dict(item.payload["raw"])
-        if body.action == "correct":
-            if not body.fields:
-                raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Nothing to correct")
-            unknown = set(body.fields) - set(EDITABLE.get(item.resource_type, []))
+        if action == "correct":
+            if not fields:
+                raise ReviewError(status.HTTP_422_UNPROCESSABLE_CONTENT, "Nothing to correct")
+            unknown = set(fields) - set(EDITABLE.get(item.resource_type, []))
             if unknown:
-                raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"Can't edit: {', '.join(sorted(unknown))}")
-            raw.update(body.fields)
+                raise ReviewError(status.HTTP_422_UNPROCESSABLE_CONTENT, f"Can't edit: {', '.join(sorted(unknown))}")
+            raw.update(fields)
         raw["confidence"] = 1.0
         raw["uncertain_reason"] = None
         try:
             normalized = nz.NORMALIZERS[item.resource_type](raw, doc.document_date)
         except (KeyError, TypeError, ValueError) as e:
-            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"Invalid value: {e}") from e
+            raise ReviewError(status.HTTP_422_UNPROCESSABLE_CONTENT, f"Invalid value: {e}") from e
         if normalized is None:
-            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "This value couldn't be understood")
+            raise ReviewError(status.HTTP_422_UNPROCESSABLE_CONTENT, "This value couldn't be understood")
         item.payload = {"raw": raw, "normalized": normalized}
         item.confidence = 1.0
-        item.review_status = "corrected" if body.action == "correct" else "confirmed"
+        item.review_status = "corrected" if action == "correct" else "confirmed"
         profile = await db.get(HealthProfile, doc.profile_id)
         assert profile is not None
         meta = (doc.result_counts or {}).get("meta", {})
@@ -165,8 +164,25 @@ async def review_item(
         actor_label=access.actor_label,
         action="upload",
         scopes=["documents"],
-        details={"review": body.action, "document": doc.label, "item": item.resource_type},
-        ip=client_ip(request),
+        details={"review": action, "document": doc.label, "item": item.resource_type},
+        ip=ip,
     )
     await db.commit()
     return {"status": item.review_status, "fhir_resource_id": item.fhir_resource_id, "document_status": doc.status}
+
+
+@router.post("/review/{item_id}", response_model=dict)
+async def review_item(
+    item_id: uuid.UUID,
+    body: ReviewAction,
+    request: Request,
+    user: User = Depends(current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    item = await db.get(ExtractionItem, item_id)
+    if item is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Item not found")
+    try:
+        return await apply_review(db, item, user, body.action, body.fields, client_ip(request))
+    except ReviewError as e:
+        raise HTTPException(e.status_code, str(e)) from e

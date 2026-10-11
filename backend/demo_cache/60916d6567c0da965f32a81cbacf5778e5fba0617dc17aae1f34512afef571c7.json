@@ -16,8 +16,8 @@
  "conditions": [
   {
    "page": 1,
-   "snippet": "Hypothyroidism (E03.9)",
-   "confidence": 0.98,
+   "snippet": "Known case of hypothyroidism since 2019",
+   "confidence": 1.0,
    "uncertain_reason": null,
    "text": "Hypothyroidism",
    "icd10_guess": "E03.9",
@@ -29,7 +29,7 @@
   {
    "page": 1,
    "snippet": "Tab. Thyronorm 50 mcg 1-0-0 before breakfast (empty stomach) — continue",
-   "confidence": 0.98,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "written_text": "Tab. Thyronorm 50 mcg 1-0-0 before breakfast (empty stomach) — continue",
    "brand": "Thyronorm",
@@ -45,7 +45,7 @@
     "as_needed": false
    },
    "duration_days": null,
-   "route": "oral",
+   "route": null,
    "start_date": "2025-01-10",
    "instructions": "before breakfast (empty stomach)"
   }
@@ -55,7 +55,7 @@
   {
    "page": 2,
    "snippet": "TSH (Thyroid Stimulating Hormone) 2.1 mIU/L 0.4 - 4.5",
-   "confidence": 0.98,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "test_name_as_written": "TSH (Thyroid Stimulating Hormone)",
    "value": 2.1,
@@ -69,7 +69,7 @@
   {
    "page": 1,
    "snippet": "Pulse 74/min",
-   "confidence": 0.98,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "name": "Pulse",
    "value": "74",
@@ -79,7 +79,7 @@
   {
    "page": 1,
    "snippet": "BP 122/78 mmHg",
-   "confidence": 0.98,
+   "confidence": 1.0,
    "uncertain_reason": null,
    "name": "Blood pressure",
    "value": "122/78",

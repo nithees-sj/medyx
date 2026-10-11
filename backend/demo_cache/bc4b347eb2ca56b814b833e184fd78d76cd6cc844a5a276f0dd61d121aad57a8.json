@@ -1,6 +1,6 @@
 {
  "document": {
-  "type": "opd_note",
+  "type": "prescription",
   "source_organization": {
    "name": "SUNRISE DIABETES & MULTISPECIALITY HOSPITAL",
    "address": "No. 14, Lake View Road, Mylapore, Chennai – 600 004"
@@ -54,8 +54,8 @@
   {
    "page": 1,
    "snippet": "ALLERGY: Penicillin — skin rash (2022)",
-   "confidence": 0.95,
-   "uncertain_reason": "Only the year (2022) was provided for the date, defaulted to YYYY-01-01.",
+   "confidence": 1.0,
+   "uncertain_reason": null,
    "substance": "Penicillin",
    "reaction": "skin rash",
    "criticality": null,

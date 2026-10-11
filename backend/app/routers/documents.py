@@ -1,33 +1,26 @@
 """Upload, list, poll, view and re-process documents."""
 
-import hashlib
 import uuid
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
-import filetype
-import pymupdf
 from fastapi import APIRouter, Depends, File, HTTPException, Request, Response, UploadFile, status
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import get_settings
 from app.db import get_db
 from app.deps import client_ip, current_user
 from app.models import Document, User
 from app.services.audit import log_event
 from app.services.consent import Access, get_scoped_record, profile_access
+from app.services.documents import MAX_BYTES, find_duplicate, next_seq, store_document, validate_upload
 from app.services.ingest.pipeline import worker
 from app.services.pages import render_page
 
 router = APIRouter(tags=["documents"])
-
-MAX_BYTES = 15 * 1024 * 1024
-MAX_PAGES = 20
-ALLOWED = {"application/pdf": ".pdf", "image/png": ".png", "image/jpeg": ".jpg"}
 
 
 class DocumentOut(BaseModel):
@@ -79,34 +72,6 @@ class UploadResult(BaseModel):
     error: str | None = None
 
 
-def sniff(data: bytes) -> str | None:
-    kind = filetype.guess(data)
-    return kind.mime if kind and kind.mime in ALLOWED else None
-
-
-def _validate(data: bytes, filename: str) -> str:
-    if len(data) > MAX_BYTES:
-        raise ValueError(f"{filename} is larger than 15 MB")
-    if not data:
-        raise ValueError(f"{filename} is empty")
-    kind = filetype.guess(data)
-    if kind and kind.mime in ("image/heic", "image/heif"):
-        raise ValueError("HEIC photos aren't supported yet. Please share the photo as JPG.")
-    mime = sniff(data)
-    if not mime:
-        raise ValueError(f"{filename} isn't a PDF, JPG or PNG")
-    if mime == "application/pdf":
-        try:
-            with pymupdf.open(stream=data, filetype="pdf") as pdf:
-                if pdf.needs_pass:
-                    raise ValueError(f"{filename} is password protected")
-                if pdf.page_count > MAX_PAGES:
-                    raise ValueError(f"{filename} has more than {MAX_PAGES} pages")
-        except (RuntimeError, pymupdf.FileDataError) as e:
-            raise ValueError(f"{filename} couldn't be opened as a PDF") from e
-    return mime
-
-
 @router.post("/profiles/{profile_id}/documents", response_model=list[UploadResult])
 async def upload_documents(
     profile_id: uuid.UUID,
@@ -118,44 +83,31 @@ async def upload_documents(
     access.require_write()
     if not files:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "No files uploaded")
-    storage = get_settings().storage_dir
-    storage.mkdir(parents=True, exist_ok=True)
     results: list[UploadResult] = []
-    next_seq = (await db.scalar(select(func.max(Document.seq)).where(Document.profile_id == profile_id)) or 0) + 1
+    seq = await next_seq(db, profile_id)
     for f in files:
         name = Path(f.filename or "document").name[:200]
         data = await f.read(MAX_BYTES + 1)
         try:
-            mime = _validate(data, name)
+            mime = validate_upload(data, name)
         except ValueError as e:
             results.append(UploadResult(filename=name, error=str(e)))
             continue
-        sha = hashlib.sha256(data).hexdigest()
-        existing = await db.scalar(
-            select(Document).where(
-                Document.profile_id == profile_id, Document.sha256 == sha, Document.status != "failed"
-            )
-        )
+        existing = await find_duplicate(db, profile_id, data)
         if existing:
             results.append(UploadResult(filename=name, document=doc_out(existing), duplicate=True))
             continue
-        path = storage / f"{uuid.uuid4().hex}{ALLOWED[mime]}"
-        path.write_bytes(data)
-        doc = Document(
+        doc = await store_document(
+            db,
             profile_id=profile_id,
-            seq=next_seq,
-            uploaded_by_user_id=access.user.id,
+            user_id=access.user.id,
             uploader_role="owner" if access.is_owner else "doctor",
-            original_filename=name,
+            filename=name,
+            data=data,
             mime=mime,
-            storage_path=str(path),
-            sha256=sha,
-            status="queued",
-            stage="Uploading",
+            seq=seq,
         )
-        next_seq += 1
-        db.add(doc)
-        await db.flush()
+        seq += 1
         results.append(UploadResult(filename=name, document=doc_out(doc)))
         await log_event(
             db,
@@ -249,3 +201,57 @@ async def retry_document(
     await db.commit()
     worker.enqueue(doc.id)
     return doc_out(doc)
+
+
+class ExplainIn(BaseModel):
+    language: Literal["English", "Tamil", "Hindi"] = "English"
+
+
+@router.post("/documents/{doc_id}/explain")
+async def explain_document(
+    doc_id: uuid.UUID, body: ExplainIn, user: User = Depends(current_user), db: AsyncSession = Depends(get_db)
+) -> dict[str, Any]:
+    """Patient-side explainer: grounded only in what was read from this document, with citations."""
+    from app.ai import client as ai
+    from app.services.copilot.digest import Digest, build_digest, extract_citations
+    from app.services.safety.engine import today
+
+    doc, access = await _doc_for_viewer(db, doc_id, user)
+    if not access.is_owner:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "The explainer is for the patient's own account")
+    _, record = await get_scoped_record(db, doc.profile_id, user)
+    sid = str(doc.id)
+    from app.services.record import PatientRecord
+
+    only = PatientRecord(
+        profile_id=record.profile_id,
+        version=record.version,
+        patient_ref=record.patient_ref,
+        display_name=record.display_name,
+        dob=record.dob,
+        sex=record.sex,
+        blood_group=record.blood_group,
+        conditions=[x for x in record.conditions if any(s.document_id == sid for s in x.sources)],
+        medications=[x for x in record.medications if any(s.document_id == sid for s in x.sources)],
+        allergies=[x for x in record.allergies if any(s.document_id == sid for s in x.sources)],
+        observations=[x for x in record.observations if any(s.document_id == sid for s in x.sources)],
+        documents=[d for d in record.documents if d.id == sid],
+    )
+    only.listable_document_ids = {sid}
+    digest: Digest = build_digest(only, access.scopes, [], today())
+    try:
+        text = await ai.generate_text(
+            purpose="explain",
+            system=ai.load_prompt("explain").replace("{language}", body.language).replace("{facts}", digest.text),
+            contents=[f"Explain document {doc.label} in {body.language}."],
+            thinking="low",
+            temperature=0.3,
+        )
+    except ai.AIError as e:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(e)) from e
+    citations, unknown = extract_citations(text, digest)
+    return {
+        "language": body.language,
+        "text": text,
+        "citations": citations + [{"key": k, "unknown": True} for k in unknown],
+    }

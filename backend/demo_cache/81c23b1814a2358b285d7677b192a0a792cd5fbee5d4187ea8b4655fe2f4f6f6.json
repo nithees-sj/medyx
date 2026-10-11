@@ -3,14 +3,14 @@
   "type": "prescription",
   "source_organization": {
    "name": "ANAND FAMILY CLINIC",
-   "address": "12, Gandhi Street, Adyar Chennai - 600 020 Ph: 98410 22334"
+   "address": "12, Gandhi Street, Adyar, Chennai - 600 020"
   },
   "practitioner": {
    "name": "Dr. R. ANAND",
    "specialty": "General Physician"
   },
   "document_date": "2026-02-18",
-  "encounter_reason": "sore throat, fever x 2 days",
+  "encounter_reason": "sore throat, fever",
   "patient_name_as_written": "Rajan S."
  },
  "conditions": [
@@ -21,7 +21,7 @@
    "uncertain_reason": null,
    "text": "Throat congestion",
    "icd10_guess": "J02.9",
-   "onset_date": null,
+   "onset_date": "2026-02-16",
    "clinical_status": "active"
   }
  ],
@@ -57,7 +57,7 @@
    "written_text": "Tab. Dolo 650 SOS",
    "brand": "Dolo",
    "generic_molecule": "paracetamol",
-   "strength": "650 mg",
+   "strength": "650",
    "form": "tablet",
    "frequency_text": "SOS",
    "frequency_parsed": {
@@ -70,7 +70,7 @@
    "duration_days": null,
    "route": null,
    "start_date": "2026-02-18",
-   "instructions": null
+   "instructions": "SOS"
   }
  ],
  "allergies": [],

@@ -13,11 +13,22 @@
   "encounter_reason": "dry cough x 6 wks",
   "patient_name_as_written": "Rajan S."
  },
- "conditions": [],
+ "conditions": [
+  {
+   "page": 1,
+   "snippet": "C/o dry cough x 6 wks",
+   "confidence": 0.98,
+   "uncertain_reason": null,
+   "text": "Dry cough",
+   "icd10_guess": "R05.9",
+   "onset_date": null,
+   "clinical_status": "active"
+  }
+ ],
  "medications": [
   {
    "page": 1,
-   "snippet": "Syp. Dextromethorphan 10 ml 1-1-1 x 7 days",
+   "snippet": "Syp. Dextromethorphan 10 ml\n1-1-1 x 7 days",
    "confidence": 0.98,
    "uncertain_reason": null,
    "written_text": "Syp. Dextromethorphan 10 ml 1-1-1 x 7 days",
@@ -34,7 +45,7 @@
     "as_needed": false
    },
    "duration_days": 7,
-   "route": "oral",
+   "route": null,
    "start_date": "2025-04-02",
    "instructions": null
   }

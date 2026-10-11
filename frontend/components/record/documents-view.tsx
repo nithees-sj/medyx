@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { ExplainDialog } from "@/components/patient/explain-dialog";
 import { OrgChip } from "@/components/record/org-chip";
 import { useDocumentViewer } from "@/components/record/viewer-context";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states";
@@ -48,11 +49,13 @@ export function DocumentsView({
   reviewHref,
   emptyAction,
   canRetry = false,
+  canExplain = false,
 }: {
   profileId: string;
   reviewHref?: string;
   emptyAction?: React.ReactNode;
   canRetry?: boolean;
+  canExplain?: boolean;
 }) {
   const { data, isLoading, isError, error, refetch } = useDocuments(profileId);
   const colors = useOrgColors(profileId).data;
@@ -143,6 +146,7 @@ export function DocumentsView({
                     <RotateCw /> Retry
                   </Button>
                 )}
+                {canExplain && d.status === "done" && <ExplainDialog documentId={d.id} label={d.label} />}
                 {d.uploader_role === "doctor" && <Badge variant="secondary">Added by doctor</Badge>}
               </div>
             </li>

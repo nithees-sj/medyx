@@ -3,7 +3,7 @@
   "type": "prescription",
   "source_organization": {
    "name": "ANAND FAMILY CLINIC",
-   "address": "12, Gandhi Street, Adyar, Chennai - 600 020"
+   "address": "12, Gandhi Street, Adyar Chennai - 600 020 Ph: 98410 22334"
   },
   "practitioner": {
    "name": "Dr. R. ANAND",
@@ -34,7 +34,7 @@
     "as_needed": false
    },
    "duration_days": null,
-   "route": null,
+   "route": "oral",
    "start_date": "2025-09-10",
    "instructions": null
   }

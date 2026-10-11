@@ -65,5 +65,6 @@ Deviations from the spec are listed in `docs/DECISIONS.md`.
 - [x] ✅ Spec §19 Phase 7 prompts
 
 ## Phase 8 — Polish and demo readiness
-- [ ] Landing page; seed `--reset` / `--stage live`; README; ARCHITECTURE.md; DEMO_SCRIPT.md
-- [ ] ✅ Clean-clone run + full demo walkthrough
+- [x] Landing page; seed `--reset` / `--stage live`; README; ARCHITECTURE.md; DEMO_SCRIPT.md
+- [x] Patient "Explain simply" (EN/TA/HI, cited)
+- [x] ✅ Clean run (`docker compose down -v` → migrations → `seed_demo --reset --stage live`) + full §21 walkthrough (`e2e/demo.py`, real Gemini)

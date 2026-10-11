@@ -262,3 +262,32 @@ async def test_drug_search(client, db, q):
     login(client, u)
     hits = (await client.get(f"/api/drugs?q={q}")).json()
     assert any(h["generic"] == "metformin" for h in hits)
+
+
+async def test_patient_explainer_is_grounded_in_one_document(client, db, world, monkeypatch):  # noqa: F811
+    seen = {}
+
+    async def fake_text(*, purpose, system, contents, **kw):
+        seen["system"] = system
+        key = next(ln.split("]")[0][1:] for ln in system.splitlines() if ln.startswith("[Observation/"))
+        return f"Your kidney test is lower than normal [{key}]. Ask about [MedicationRequest/999]."
+
+    monkeypatch.setattr("app.ai.client.generate_text", fake_text)
+    login(client, world["owner"])
+    docs = (await client.get(f"/api/profiles/{world['pid']}/documents")).json()
+    lab = next(d for d in docs if d["original_filename"] == "medline_2026-08-05_lab.pdf")
+    resp = await client.post(f"/api/documents/{lab['id']}/explain", json={"language": "Tamil"})
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["language"] == "Tamil" and "Tamil" in seen["system"]
+    assert [c["key"] for c in body["citations"] if not c.get("unknown")][0].startswith("Observation/")
+    assert any(c.get("unknown") and c["key"] == "MedicationRequest/999" for c in body["citations"])
+    # Only this report's facts reach the model: no medicines, allergies or other labs' values.
+    assert "eGFR 47" in seen["system"]
+    for forbidden in ("Penicillin", "Glycomet", "Novamox", "eGFR 72", "eGFR 61"):
+        assert forbidden not in seen["system"], forbidden
+    assert (await client.post(f"/api/documents/{lab['id']}/explain", json={"language": "French"})).status_code == 422
+    # Doctors, even with full consent, use the copilot instead.
+    await grant(db, world, ALL_FOUR + ["documents"])
+    login(client, world["doctor"])
+    assert (await client.post(f"/api/documents/{lab['id']}/explain", json={})).status_code == 403
