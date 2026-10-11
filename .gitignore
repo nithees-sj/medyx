@@ -31,3 +31,6 @@ frontend/playwright-report/
 .idea/
 .vscode/
 e2e/screenshots/
+
+# Claude Code personal settings
+.claude/settings.local.json
