@@ -40,7 +40,7 @@ function CountLines({
       </ul>
       <div style={{ height }} aria-hidden>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 6, right: 8, bottom: 0, left: -18 }}>
+          <LineChart data={data} margin={{ top: 6, right: 8, bottom: 0, left: 0 }}>
             <CartesianGrid vertical={false} stroke="var(--border)" />
             <XAxis
               dataKey={xKey}
